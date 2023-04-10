@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": true,
+
+  // Enable per-language
+  // "[javascript]": {
+  //   "editor.formatOnSave": true
+  // }
+
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.validate": ["javascript"],
+
+  "files.associations": {
+    ".env*": "properties"
+  }
+}

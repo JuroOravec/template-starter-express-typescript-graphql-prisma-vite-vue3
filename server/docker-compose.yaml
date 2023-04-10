@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    ports:
+      - 80:80
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      # - /etc/ssl/certs:/etc/ssl/certs # TODO DO I NEED THIS?
+
+  postgres-db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${SERVER_DB_USER}
+      POSTGRES_PASSWORD: ${SERVER_DB_PASSWORD}
+      POSTGRES_DB: ${SERVER_DB_NAME}
+
+  redis:
+    image: redis:6.2-alpine
+    restart: always
+
+  node_server:
+    build: .
+    expose:
+      - '3000'
+    command: npm run start
+    environment:
+      VIRTUAL_HOST: localhost
+      SERVER_DB_URL: ${SERVER_DB_URL}
+      NODE_ENV: ${NODE_ENV}
+      APP_ENV: ${APP_ENV}
+
+    depends_on:
+      - postgres-db
+      - redis
+      - nginx-proxy
