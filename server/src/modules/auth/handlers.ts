@@ -9,7 +9,7 @@ import {
   createUser,
   getUserByEmail,
 } from '@/datasources/serverDb/endpointsUser';
-import { logger } from '@/modules/core/utils/logger';
+import { logger } from '@/modules/core/lib/logger';
 import { verifyPassword } from './utils/encryptPassword';
 
 passport.serializeUser((user: Express.User, done): void => {
@@ -112,8 +112,10 @@ export const singupHandler: Handler = async (req, res, next) => {
   return next();
 };
 
-export const logoutHandler: Handler = (req, res, next) => {
-  req.logout();
+export const logoutHandler: Handler = async (req, res, next) => {
+  await new Promise<void>((res, rej) =>
+    req.logout({}, (err) => (err ? rej(err) : res())),
+  );
   res.status(200).json({
     data: null,
   });

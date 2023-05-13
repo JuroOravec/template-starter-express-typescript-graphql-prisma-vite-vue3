@@ -1,12 +1,9 @@
 import 'module-alias/register'; // See https://www.npmjs.com/package/module-alias
 
-// import { setupHandleProcessErrors } from './modules/core/utils/setupHandleProcessErrors';
-import { logger } from './modules/core/utils/logger';
+import { logger } from './modules/core/lib/logger';
 import { createExpressServer } from './server';
-import { setupServerChassis } from './modules/core/utils/serverChassis';
-import { config } from './modules/core/utils/config';
-
-// setupHandleProcessErrors();
+import { setupServerChassis } from './modules/core/lib/serverChassis';
+import { config } from './modules/core/lib/config';
 
 const { port, baseUrl } = config;
 

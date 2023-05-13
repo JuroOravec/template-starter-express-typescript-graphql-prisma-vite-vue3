@@ -1,26 +1,32 @@
 import express, { Express } from 'express';
+import { expressMiddleware } from '@apollo/server/express4';
 import compression from 'compression';
 import passport from 'passport';
 
+import { bodyParserHandler } from './modules/core/handlers';
 import {
-  bodyParserHandler,
-  bodyParserOptions,
-} from './modules/core/handlers/bodyParserHandler';
-import { corsHandler, corsOptions } from './modules/core/handlers/corsHandler';
-import { sessionHandler } from './modules/core/handlers/sessionHandler';
-import { createValidateRequestHandler } from './modules/core/handlers/validateRequestHandler';
-import { errorHandler } from './modules/core/handlers/errorHandler';
-import { notFoundHandler } from './modules/core/handlers/notFoundHandler';
-import { csrfHandler } from './modules/core/handlers/csrfHandler';
-import { helmetHandler } from './modules/core/handlers/helmetHandler';
-
+  corsHandler,
+  csrfHandler,
+  helmetHandler,
+} from './modules/security/handlers';
+import { createSessionHandler } from './modules/session/handlers';
+import {
+  errorHandler,
+  notFoundHandler,
+  createValidateRequestHandler,
+} from './modules/core/handlers';
 import { apolloServer } from './apis/graphql/apolloServer';
-import { initRedisClient } from './datasources/redis/redisClient';
-import { authRouter } from './modules/auth/authRouter';
-import { authHandler } from './modules/auth/authHandlers';
+import { createRedisClient } from './datasources/redis/redisClient';
+import { createAuthRouter } from './modules/auth/router';
+import { authHandler } from './modules/auth/handlers';
+import { createCoreRouter } from './modules/core/router';
+import { config } from './modules/core/lib/config';
 
 export const createExpressServer = async (): Promise<Express> => {
   const app = express();
+  const { redisClient, redisConnect } = createRedisClient({
+    url: config.redisUrl,
+  });
 
   // Get real ip from nginx proxy
   app.set('trust proxy', true);
@@ -31,31 +37,36 @@ export const createExpressServer = async (): Promise<Express> => {
     corsHandler,
     compression(),
     helmetHandler,
-    sessionHandler,
-    // TODO: Enable this or what?
-    // app.use(createValidateRequestHandler());
+    createSessionHandler(redisClient),
+    // app.use(createValidateRequestHandler()); // TODO: Enable this?
     csrfHandler,
     passport.initialize(),
     passport.session(),
   );
 
   // Routes
-  // TODO: Enable this or what?
-  // app.use('/graphql', authHandler);
-  app.use('/auth', authRouter);
+  // app.use('/graphql', authHandler); // TODO: Enable this?
+  app.get('/hello', createCoreRouter());
+  app.use('/auth', createAuthRouter());
 
+  // Set up Apollo server
+  // @ts-ignore - Silence this error https://stackoverflow.com/questions/66858790
   await apolloServer.start();
-  apolloServer.applyMiddleware({
-    app,
-    path: '/graphql',
-    cors: corsOptions,
-    bodyParserConfig: bodyParserOptions,
-  });
+  app.use(
+    '/graphql',
+    expressMiddleware(apolloServer, {
+      context: async ({ req, res }) => {
+        // TODO ?
+        return {
+          user: req,
+        };
+      },
+    }),
+  );
 
   app.use(notFoundHandler, errorHandler);
 
-  // TODO: Await for this
-  initRedisClient();
+  await redisConnect();
 
   return app;
 };

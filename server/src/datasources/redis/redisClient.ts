@@ -1,16 +1,16 @@
-import { createClient } from 'redis';
+import { RedisClientOptions, createClient } from 'redis';
 
-import { config } from '@/modules/core/utils/config';
-import { logger } from '@/modules/core/utils/logger';
+import { logger } from '@/modules/core/lib/logger';
 
-export const redisClient = createClient({
-  url: config.redisUrl,
-  // See https://stackoverflow.com/a/70225118/9788634
-  legacyMode: true,
-});
+export const createRedisClient = (clientOptions?: RedisClientOptions) => {
+  const redisClient = createClient(clientOptions);
 
-export const initRedisClient = async (): Promise<void> => {
   redisClient.on('error', (err) => logger.error(`Redis Client Error: ${err}`));
 
-  await redisClient.connect();
+  /** Shorthand for `redisClient.connect().catch(logger.error)` */
+  const redisConnect = (): Promise<void> => {
+    return redisClient.connect().catch(logger.error);
+  };
+
+  return { redisClient, redisConnect };
 };

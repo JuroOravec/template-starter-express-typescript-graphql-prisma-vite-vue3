@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { parseEnvVarAsInt } from './configUtils';
+import { parseEnvVarAsInt } from '../utils/configUtils';
 
 /**
  * App environements.
