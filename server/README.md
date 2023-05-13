@@ -74,6 +74,14 @@ npm run prisma -- validate
 npm run test
 ```
 
+### 6. Stop services
+
+Lastly stop the docker:
+
+```sh
+npm run docker:stop
+```
+
 ## Troubleshooting
 
 #### docker.sock: connect: permission denied

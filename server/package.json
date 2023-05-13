@@ -23,7 +23,7 @@
     "docker:start:local": "dotenv -e .env.local -- docker-compose -f docker-compose.local.yaml up",
     "docker:start:dev": "dotenv -e .env.dev -- docker-compose up",
     "docker:start:prd": "dotenv -e .env.prd -- docker-compose up",
-    "docker:clean": "docker-compose down",
+    "docker:stop": "docker-compose down",
     "playground": "dotenv -e .env.dev -- ts-node ./playground.ts"
   },
   "author": "Juro Oravec <juraj.oravec.josefson@gmail.com>",
