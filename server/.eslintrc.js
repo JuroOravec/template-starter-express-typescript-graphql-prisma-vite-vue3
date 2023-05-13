@@ -1,37 +1,28 @@
 module.exports = {
-  "extends": [
-    "eslint:recommended",
-    "plugin:prettier/recommended",
-    "plugin:@typescript-eslint/recommended",
+  extends: [
+    'eslint:recommended',
+    'plugin:prettier/recommended',
+    'plugin:@typescript-eslint/recommended',
   ],
-  "plugins": [
-    "prettier",
-    "@typescript-eslint",
-  ],
-  "env": {
-    "node": true,
-    "es6": true
+  plugins: ['prettier', '@typescript-eslint'],
+  env: {
+    node: true,
+    es6: true,
   },
-  "parser": "@typescript-eslint/parser",
-  "parserOptions": {
-    "sourceType": "module",
-    "ecmaVersion": "latest",
+  parser: '@typescript-eslint/parser',
+  parserOptions: {
+    sourceType: 'module',
+    ecmaVersion: 'latest',
     // "project": "tsconfig.json"
   },
-  "ignorePatterns": [
-    "node_modules",
-    "build",
-    "dist",
-    "public"
-  ],
-  "rules": {
-    "no-console": "warn",
-    "prettier/prettier": "error",
-    "@typescript-eslint/explicit-member-accessibility": 'off',
-    "@typescript-eslint/no-explicit-any": 'off',
-    "@typescript-eslint/ban-ts-comment": 'warn',
+  ignorePatterns: ['node_modules', 'build', 'dist', 'public'],
+  rules: {
+    'no-console': 'warn',
+    'prettier/prettier': 'error',
+    '@typescript-eslint/explicit-member-accessibility': 'off',
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
     'max-len': 'off',
-    
   },
   // "overrides": [
   //   {
