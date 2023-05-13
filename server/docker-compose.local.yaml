@@ -9,8 +9,8 @@ services:
   #     - /var/run/docker.sock:/tmp/docker.sock:ro
   #     # - /etc/ssl/certs:/etc/ssl/certs # TODO DO I NEED THIS?
 
-  postgres-db:
-    image: postgres:14.1-alpine
+  postgres:
+    image: postgres:15.3-alpine
     restart: always
     ports:
       - 5432:5432
@@ -20,7 +20,7 @@ services:
       POSTGRES_DB: ${SERVER_DB_NAME}
 
   redis:
-    image: redis:6.2-alpine
+    image: redis:7.0-alpine
     restart: always
     ports:
       - 6379:6379
@@ -37,8 +37,7 @@ services:
   #     SERVER_DB_URL: ${SERVER_DB_URL}
   #     NODE_ENV: ${NODE_ENV}
   #     APP_ENV: ${APP_ENV}
-
   #   depends_on:
-  #     - postgres-db
+  #     - postgres
   #     - redis
   #     - nginx-proxy
