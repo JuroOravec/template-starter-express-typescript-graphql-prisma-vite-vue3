@@ -1,0 +1,73 @@
+# See https://medium.com/@vitalypanukhin/docker-compose-and-gitlab-b209d09210f6
+
+image: creatiwww/docker-compose:latest
+
+services:
+  - docker:dind
+
+variables:
+  STAGE_SERVER_IP: 10.10.10.1
+  PROD_SERVER_IP: 10.10.10.2
+  STAGE_SERVER_USER: gitlab
+  PROD_SERVER_USER: gitlab
+  STAGE_IMAGE_APP_TAG: registry.my_organiation.org/development/amazing_app/app:stage
+  PROD_IMAGE_APP_TAG: registry.my_organiation.org/development/amazing_app/app:prod
+  EXTERNAL_SERVICE_STAGE_API_BASE_URL: https://test.some-service.com/
+  EXTERNAL_SERVICE_PROD_API_BASE_URL: https://some-service.com/
+
+stages:
+  - build
+  - staging
+  - release
+  - deploy
+
+job-build:
+  stage: build
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY_IMAGE
+    - echo "IMAGE_APP_TAG=$STAGE_IMAGE_APP_TAG" >> .env
+    - docker-compose build
+    - docker-compose push
+  only:
+    - pre-prod
+    - master
+
+job-deploy-to-stage:
+  stage: staging
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_STAGE_SERVER_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY_IMAGE
+    - echo "EXTERNAL_SERVICE_KEY=$EXTERNAL_SERVICE_STAGE_KEY" >> .env
+    - echo "IMAGE_APP_TAG=$STAGE_IMAGE_APP_TAG" >> .env
+    - docker-compose -H "ssh://$STAGE_SERVER_USER@$STAGE_SERVER_IP" down --remove-orphans
+    - docker-compose -H "ssh://$STAGE_SERVER_USER@$STAGE_SERVER_IP" pull
+    - docker-compose -H "ssh://$STAGE_SERVER_USER@$STAGE_SERVER_IP" up -d
+  only:
+    - pre-prod
+    - master
+
+job-release:
+  stage: release
+  script:
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY_IMAGE
+    - echo "IMAGE_APP_TAG=$PROD_IMAGE_APP_TAG" >> .env
+    - docker-compose build
+    - docker-compose push
+  only:
+    - master
+
+job-deploy-to-prod:
+  stage: deploy
+  script:
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PROD_SERVER_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY_IMAGE
+    - echo "EXTERNAL_SERVICE_KEY=$EXTERNAL_SERVICE_PROD_KEY" >> .env
+    - echo "IMAGE_APP_TAG=$PROD_IMAGE_APP_TAG" >> .env
+    - docker-compose -H "ssh://$PROD_SERVER_USER@$PROD_SERVER_IP" down --remove-orphans
+    - docker-compose -H "ssh://$PROD_SERVER_USER@$PROD_SERVER_IP" pull
+    - docker-compose -H "ssh://$PROD_SERVER_USER@$PROD_SERVER_IP" up -d
+  only:
+    - master
+  when: manual

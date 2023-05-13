@@ -31,7 +31,6 @@ services:
       SERVER_DB_URL: ${SERVER_DB_URL}
       NODE_ENV: ${NODE_ENV}
       APP_ENV: ${APP_ENV}
-
     depends_on:
       - postgres
       - redis
