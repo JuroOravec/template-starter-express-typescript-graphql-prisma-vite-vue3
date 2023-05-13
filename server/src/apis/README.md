@@ -1,3 +1,3 @@
 # apis
 
-Here are defined all the ways how the server provides an API (eg GraphQL).
+Here are defined all the ways the server provides APIs (eg GraphQL). These downstream connections.
