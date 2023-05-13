@@ -1,10 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("SERVER_DB_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Post {
@@ -12,14 +12,14 @@ model Post {
   title     String
   content   String?
   published Boolean @default(false)
-  author    User?   @relation(fields: [authorId], references: [id])
   authorId  Int?
+  author    User?   @relation(fields: [authorId], references: [id])
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  name      String?
-  password  String
-  posts     Post[]
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  name     String?
+  password String
+  posts    Post[]
 }
