@@ -29,6 +29,7 @@ const port = parseEnvVarAsInt() ?? 3000;
  * This is the source of truth.
  */
 const configs: Record<AppEnv, Config> = Object.freeze({
+  /** Config for running things on our own machine, with services possibly outside of docker-compose */
   [AppEnv.LOCAL]: {
     port,
     baseUrl: 'http://localhost',
@@ -39,6 +40,7 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     // TODO: Should I move this to env vars?
     sessionCookieSecret: 'cookieSecretDev',
   },
+  /** Config for running things on our own machine or dev server, all services communicate within the docker network */
   [AppEnv.DEV]: {
     port,
     baseUrl: 'http://localhost',
@@ -49,6 +51,7 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     // TODO: Should I move this to env vars?
     sessionCookieSecret: 'cookieSecretDev',
   },
+  /** Prod config - This is how things run on the deployed prod server */
   [AppEnv.PRD]: {
     port,
     baseUrl: 'http://localhost',
