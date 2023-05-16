@@ -1,73 +1,204 @@
-# See https://medium.com/@vitalypanukhin/docker-compose-and-gitlab-b209d09210f6
+# See original blog post
+# https://medium.com/@vitalypanukhin/docker-compose-and-gitlab-b209d09210f6
+#
+# NOTE: Don't worry, it can take a few days really understand this file,
+#       as you need to understand:
+#         - gitlab-ci.yml (+ its workers and env)
+#         - ssh + private/public keys
+#         - docker compose + containers
+#         - provisioninng computing units from cloud providers like AWS, GCP, DigitalOcean, ...
+#
+# Find more about .gitlab-ci.yml
+# https://docs.gitlab.com/ee/ci/yaml/gitlab_ci_yaml.html
+#
+# Authentication:
+# Note on the "user" that authenticates with docker and pushes
+# the image to repository:
+#
+# - Original blog post named it `gitlab-ci-token`, which is how
+#   they named the Deploy Token. However, in the screenshot in
+#   the blog post, the token doesn't have correct permissions.
+#
+# - I assume the Deploy Token needs both `read_registry` and
+#   `write_registry`, because:
+#   1) We push to registry on build and release jobs
+#   2) We pull from the registry on stage/prod deploys
+#
+# - There are several types of deploy tokens / auth methods.
+#   we use the fact that if deploy token is called `gitlab-deploy-token`,
+#   then in CI the env vars CI_DEPLOY_USER and CI_DEPLOY_PASSWORD
+#   are populated with its info.
+#
+# Learn more:
+# - https://docs.gitlab.com/ee/user/project/deploy_tokens/index.html#gitlab-deploy-token
+# - https://docs.gitlab.com/ee/user/packages/container_registry/authenticate_with_container_registry.html
+# - https://docs.gitlab.com/ee/ci/jobs/ci_job_token.html
+#
+# Troubleshooting
+# - SSH
+#   - https://stackoverflow.com/questions/1405324
+#   - https://serverfault.com/questions/638628
+#   - https://pentestmonkey.net/blog/ssh-with-no-tty
+# - SSH + docker-compose
+#   - NOTE: using `docker-compose -H "ssh://...` did not work
+#   - https://stackoverflow.com/questions/66548612
+#   - https://github.com/docker/compose/issues/9852
+#   - https://stackoverflow.com/questions/4135261/paramiko-authenticationexception-issue
+
+########################
+# 1. SETUP
+########################
 
 image: creatiwww/docker-compose:latest
 
 services:
+  ## See https://forum.gitlab.com/t/why-services-docker-dind-is-needed-while-already-having-image-docker/43534
   - docker:dind
 
 variables:
-  STAGE_SERVER_IP: 10.10.10.1
+  # STAGE_SERVER_IP: 10.10.10.1
   PROD_SERVER_IP: 10.10.10.2
-  STAGE_SERVER_USER: gitlab
+  # STAGE_SERVER_USER: gitlab
   PROD_SERVER_USER: gitlab
-  STAGE_IMAGE_APP_TAG: registry.my_organiation.org/development/amazing_app/app:stage
-  PROD_IMAGE_APP_TAG: registry.my_organiation.org/development/amazing_app/app:prod
-  EXTERNAL_SERVICE_STAGE_API_BASE_URL: https://test.some-service.com/
-  EXTERNAL_SERVICE_PROD_API_BASE_URL: https://some-service.com/
+  ## Tag used for dev deployment, e.g. registry.gitlab.com/org-name/proj-name/server-dev:latest
+  SERVER_TAG_LATEST: $CI_REGISTRY_IMAGE/server-$CI_COMMIT_REF_NAME:latest
+  ## Tag used for prod/staging deployment, e.g. registry.gitlab.com/org-name/proj-name/server-dev:526490c1
+  SERVER_TAG_COMMIT: $CI_REGISTRY_IMAGE/server-$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
 
 stages:
-  - build
-  - staging
-  - release
-  - deploy
+  - test
+  # - build-stg
+  # - deploy-stg
+  - build-prod
+  - deploy-prod
 
-job-build:
-  stage: build
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY_IMAGE
-    - echo "IMAGE_APP_TAG=$STAGE_IMAGE_APP_TAG" >> .env
-    - docker-compose build
-    - docker-compose push
+########################
+# 2.1 TEST JOBS
+########################
+
+# Test that we can establish connection to servers
+
+# server-ssh-stg:
+#   stage: test
+#   only:
+#     - staging
+#   script:
+#     - eval $(ssh-agent -s)
+#     ## See https://stackoverflow.com/a/56163560/9788634
+#     - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+#     ## Fix this issue https://codeql.github.com/codeql-query-help/python/py-paramiko-missing-host-key-validation/
+#     ## https://www.techrepublic.com/article/how-to-easily-add-an-ssh-fingerprint-to-your-knownhosts-file-in-linux/
+#     - mkdir ~/.ssh
+#     - ssh-keyscan -H $STAGE_SERVER_IP >> ~/.ssh/known_hosts
+#     ## See https://serverfault.com/q/638628/1021637
+#     - ssh -vT "$STAGE_SERVER_USER@$STAGE_SERVER_IP"
+
+server-ssh-prod:
+  stage: test
   only:
-    - pre-prod
-    - master
-
-job-deploy-to-stage:
-  stage: staging
-  script:
-    - eval $(ssh-agent -s)
-    - echo "$SSH_STAGE_SERVER_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY_IMAGE
-    - echo "EXTERNAL_SERVICE_KEY=$EXTERNAL_SERVICE_STAGE_KEY" >> .env
-    - echo "IMAGE_APP_TAG=$STAGE_IMAGE_APP_TAG" >> .env
-    - docker-compose -H "ssh://$STAGE_SERVER_USER@$STAGE_SERVER_IP" down --remove-orphans
-    - docker-compose -H "ssh://$STAGE_SERVER_USER@$STAGE_SERVER_IP" pull
-    - docker-compose -H "ssh://$STAGE_SERVER_USER@$STAGE_SERVER_IP" up -d
-  only:
-    - pre-prod
-    - master
-
-job-release:
-  stage: release
-  script:
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY_IMAGE
-    - echo "IMAGE_APP_TAG=$PROD_IMAGE_APP_TAG" >> .env
-    - docker-compose build
-    - docker-compose push
-  only:
-    - master
-
-job-deploy-to-prod:
-  stage: deploy
+    - main
   script:
     - eval $(ssh-agent -s)
-    - echo "$SSH_PROD_SERVER_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN $CI_REGISTRY_IMAGE
-    - echo "EXTERNAL_SERVICE_KEY=$EXTERNAL_SERVICE_PROD_KEY" >> .env
-    - echo "IMAGE_APP_TAG=$PROD_IMAGE_APP_TAG" >> .env
-    - docker-compose -H "ssh://$PROD_SERVER_USER@$PROD_SERVER_IP" down --remove-orphans
-    - docker-compose -H "ssh://$PROD_SERVER_USER@$PROD_SERVER_IP" pull
-    - docker-compose -H "ssh://$PROD_SERVER_USER@$PROD_SERVER_IP" up -d
+    ## See https://stackoverflow.com/a/56163560/9788634
+    - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    ## Fix this issue https://codeql.github.com/codeql-query-help/python/py-paramiko-missing-host-key-validation/
+    ## https://www.techrepublic.com/article/how-to-easily-add-an-ssh-fingerprint-to-your-knownhosts-file-in-linux/
+    - mkdir ~/.ssh
+    - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
+    ## See https://serverfault.com/q/638628/1021637
+    - ssh -vT "$PROD_SERVER_USER@$PROD_SERVER_IP"
+
+# Test code
+
+server-lint:
+  stage: test
   only:
-    - master
+    - staging
+    - main
+    - dev
+  image: node:18-alpine
+  script:
+    - cd server
+    - npm ci
+    - npm run lint
+
+server-test-unit:
+  stage: test
+  only:
+    - staging
+    - main
+    - dev
+  image: node:18-alpine
+  script:
+    - cd server
+    - npm ci
+    - npm run test:unit
+
+########################
+# 2.2 STAGE DEPLOY JOBS
+########################
+
+# server-build-stg:
+#   stage: build-stg
+#   only:
+#     - staging
+#   script:
+#     - cd server
+#     - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE
+#     - mv .env.dev .env
+#     - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_COMMIT" >> .env
+#     - docker-compose build
+#     - docker-compose push
+#     - echo Image $SERVER_TAG_COMMIT added to registry $CI_REGISTRY_IMAGE
+
+# server-deploy-stg:
+#   stage: deploy-stg
+#   only:
+#     - staging
+#   script:
+#     - cd server
+#     - mv .env.dev .env
+#     - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_COMMIT" >> .env
+#     - eval $(ssh-agent -s)
+#     - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+#     - mkdir ~/.ssh
+#     - ssh-keyscan -H $STAGE_SERVER_IP >> ~/.ssh/known_hosts
+#     ## NOTE: using `docker-compose -H "ssh://...` did not work
+#     ##       Instead, we manually copy files to server, SSH in, and run docker-compose
+#     - scp -r .env docker-compose.yaml Dockerfile scripts volumes $STAGE_SERVER_USER@$STAGE_SERVER_IP:~
+#     - ssh $STAGE_SERVER_USER@$STAGE_SERVER_IP "docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE; docker-compose --verbose down --remove-orphans; docker-compose --verbose pull; docker-compose --verbose up -d"
+
+########################
+# 2.2 PROD DEPLOY JOBS
+########################
+
+server-build-prod:
+  stage: build-prod
+  only:
+    - main
+  script:
+    - cd server
+    - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE
+    - mv .env.prd .env
+    - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_LATEST" >> .env
+    - docker-compose build
+    - docker-compose push
+    - echo Image $SERVER_TAG_LATEST added to registry $CI_REGISTRY_IMAGE
+
+server-deploy-prod:
+  stage: deploy-prod
+  only:
+    - main
   when: manual
+  script:
+    - cd server
+    - mv .env.prd .env
+    - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_LATEST" >> .env
+    - eval $(ssh-agent -s)
+    - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
+    - mkdir ~/.ssh
+    - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
+    ## NOTE: using `docker-compose -H "ssh://...` did not work
+    ##       Instead, we manually copy files to server, SSH in, and run docker-compose
+    - scp -r .env docker-compose.yaml Dockerfile scripts volumes $PROD_SERVER_USER@$PROD_SERVER_IP:~
+    - ssh $PROD_SERVER_USER@$PROD_SERVER_IP "docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE; docker-compose --verbose down --remove-orphans; docker-compose --verbose pull; docker-compose --verbose up -d"

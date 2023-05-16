@@ -3,7 +3,7 @@
 # Build phase
 # 1) Generate prisma client
 # 2) Compile TS to JS
-FROM node:16.13-alpine as builder
+FROM node:18-alpine as builder
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ RUN npm run prisma:generate
 RUN npm run build
 
 # Production
-FROM node:16.13-alpine as prod_build
+FROM node:18-alpine as prod_build
 
 WORKDIR /app
 
