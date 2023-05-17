@@ -147,6 +147,7 @@ server-test-unit:
 #     - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE
 #     - mv .env.dev .env
 #     - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_COMMIT" >> .env
+#     - echo -e "\nMAIL_RELAY_PASSWORD=$MAIL_RELAY_PASSWORD" >> .env
 #     - docker-compose build
 #     - docker-compose push
 #     - echo Image $SERVER_TAG_COMMIT added to registry $CI_REGISTRY_IMAGE
@@ -165,8 +166,8 @@ server-test-unit:
 #     - ssh-keyscan -H $STAGE_SERVER_IP >> ~/.ssh/known_hosts
 #     ## NOTE: using `docker-compose -H "ssh://...` did not work
 #     ##       Instead, we manually copy files to server, SSH in, and run docker-compose
-#     - scp -r .env docker-compose.yaml Dockerfile scripts volumes $STAGE_SERVER_USER@$STAGE_SERVER_IP:~
-#     - ssh $STAGE_SERVER_USER@$STAGE_SERVER_IP "docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE; docker-compose --verbose down --remove-orphans; docker-compose --verbose pull; docker-compose --verbose up -d"
+#     - scp -r .env docker-compose.yaml Dockerfile mailserver.env scripts volumes $STAGE_SERVER_USER@$STAGE_SERVER_IP:~
+#     - ssh $STAGE_SERVER_USER@$STAGE_SERVER_IP "docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE; docker-compose down --remove-orphans; docker-compose pull; docker-compose up -d"
 
 ########################
 # 2.2 PROD DEPLOY JOBS
@@ -194,11 +195,12 @@ server-deploy-prod:
     - cd server
     - mv .env.prd .env
     - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_LATEST" >> .env
+    - echo -e "\nMAIL_RELAY_PASSWORD=$MAIL_RELAY_PASSWORD" >> .env
     - eval $(ssh-agent -s)
     - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
     - mkdir ~/.ssh
     - ssh-keyscan -H $PROD_SERVER_IP >> ~/.ssh/known_hosts
     ## NOTE: using `docker-compose -H "ssh://...` did not work
     ##       Instead, we manually copy files to server, SSH in, and run docker-compose
-    - scp -r .env docker-compose.yaml Dockerfile scripts volumes $PROD_SERVER_USER@$PROD_SERVER_IP:~
-    - ssh $PROD_SERVER_USER@$PROD_SERVER_IP "docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE; docker-compose --verbose down --remove-orphans; docker-compose --verbose pull; docker-compose --verbose up -d"
+    - scp -r .env docker-compose.yaml Dockerfile mailserver.env scripts volumes $PROD_SERVER_USER@$PROD_SERVER_IP:~
+    - ssh $PROD_SERVER_USER@$PROD_SERVER_IP "docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE; docker-compose down --remove-orphans; docker-compose pull; docker-compose up -d"

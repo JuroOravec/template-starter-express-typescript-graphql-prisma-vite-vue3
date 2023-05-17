@@ -86,7 +86,14 @@ ufw allow OpenSSH
 sed -i "s/#\$nrconf{kernelhints} = -1;/\$nrconf{kernelhints} = -1;/g" /etc/needrestart/needrestart.conf
 sudo apt-get install nginx -y
 ufw allow "Nginx Full"
+## Mailserver - https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/#using-dms-as-a-local-mail-relay-for-containers
+ufw allow 25
+ufw allow 143
+ufw allow 465
+ufw allow 587
+ufw allow 993
 ufw --force enable
+ufw status verbose
 
 ## 6. Copy the private key and set it to SSH_PROD_SERVER_PRIVATE_KEY or SSH_STAGE_SERVER_PRIVATE_KEY
 ##    in Gitlab > CI/CD Settings > Variables.
@@ -104,5 +111,5 @@ echo -e "\n<REPLACE_WITH_PUBLIC_KEY>" >> ~/.ssh/authorized_keys
 echo -e "\n<REPLACE_WITH_PUBLIC_KEY>" >> /home/"$DEPLOY_USER"/.ssh/authorized_keys
 
 # 8. Once done and you can deploy the project onto remote server,
-#    then give it a domain, and head over to `init-letsencrypt.sh`
+#    then give it a domain, and head over to `letsencrypt-init.sh`
 #    script to set up SSL cert

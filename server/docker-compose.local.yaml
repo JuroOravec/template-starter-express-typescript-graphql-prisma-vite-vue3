@@ -40,9 +40,11 @@ services:
   # node_server:
   #   build: .
   #   expose:
-  #     - '3000'
+  #     - '3000' # Disable if not using HTTP server
+  #     - '25' # Disable if not using SMTP server
   #   ports:
-  #     - 3000:3000
+  #     - 3000:3000 # Disable if not using HTTP server
+  #     - 25:25 # Disable if not using SMTP server
   #   restart: always
   #   command: npm run start
   #   environment:
@@ -54,32 +56,40 @@ services:
   #     - postgres
   #     - redis
 
+  # If you need a full-fledged mail server, you can use this
   # See https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/#using-dms-as-a-local-mail-relay-for-containers
   # mailserver:
-  #   image: ghcr.io/docker-mailserver/docker-mailserver:latest
+  #   # NOTE: Do not upgrade beyond 12.0.
+  #   # This MR broke the option to forward email
+  #   # https://github.com/docker-mailserver/docker-mailserver/pull/3270
+  #   image: ghcr.io/docker-mailserver/docker-mailserver:12.0
   #   container_name: mailserver
   #   # Provide the FQDN of your mail server here (Your DNS MX record should point to this value)
-  #   hostname: mail.example.com # TODO
-  #   ports:
-  #     - "25:25"
-  #     - "587:587"
-  #     - "465:465"
-  #   volumes:
-  #     - ./docker-data/dms/mail-data/:/var/mail/
-  #     - ./docker-data/dms/mail-state/:/var/mail-state/
-  #     - ./docker-data/dms/mail-logs/:/var/log/mail/
-  #     - ./docker-data/dms/config/:/tmp/docker-mailserver/
-  #     - /etc/localtime:/etc/localtime:ro
+  #   hostname: system-mail.example.com
+  #   env_file: mailserver.env
   #   environment:
-  #     - ENABLE_FAIL2BAN=1
-  #     # Using letsencrypt for SSL/TLS certificates:
-  #     - SSL_TYPE=letsencrypt
-  #     # Allow sending emails from other docker containers:
-  #     # Beware creating an Open Relay: https://docker-mailserver.github.io/docker-mailserver/latest/config/environment/#permit_docker
-  #     - PERMIT_DOCKER=network
-  #     # You may want to enable this: https://docker-mailserver.github.io/docker-mailserver/latest/config/environment/#spoof_protection
-  #     # See step 6 below, which demonstrates setup with enabled/disabled SPOOF_PROTECTION:
-  #     - SPOOF_PROTECTION=1
+  #     - RELAY_PASSWORD=${MAIL_RELAY_PASSWORD}
+  #   # More information about the mail-server ports:
+  #   # https://docker-mailserver.github.io/docker-mailserver/latest/config/security/understanding-the-ports/
+  #   # To avoid conflicts with yaml base-60 float, DO NOT remove the quotation marks.
+  #   ports:
+  #     - "25:25"    # SMTP  (explicit TLS => STARTTLS)
+  #     - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
+  #     - "465:465"  # ESMTP (implicit TLS)
+  #     - "587:587"  # ESMTP (explicit TLS => STARTTLS)
+  #     - "993:993"  # IMAP4 (implicit TLS)
+  #   volumes:
+  #     - ./volumes/dms/mail-data/:/var/mail/
+  #     - ./volumes/dms/mail-state/:/var/mail-state/
+  #     - ./volumes/dms/mail-logs/:/var/log/mail/
+  #     - ./volumes/dms/config/:/tmp/docker-mailserver/
+  #     - /etc/localtime:/etc/localtime:ro
+  #     - ./volumes/certbot/conf:/etc/letsencrypt
+  #   restart: always
+  #   stop_grace_period: 1m
   #   cap_add:
   #     - NET_ADMIN # For Fail2Ban to work
-  #   restart: always
+  #   healthcheck:
+  #     test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+  #     timeout: 3s
+  #     retries: 0

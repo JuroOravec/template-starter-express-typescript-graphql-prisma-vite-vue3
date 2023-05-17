@@ -12,3 +12,4 @@
 - CI/CD pipeline with test & build stages Gitlab + `gitlab-ci.yml`
 - App built and deployed as a docker container (docker-compose)
 - Reverse proxy (Nginx) + SSL cert (Let's encrypt + certbot)
+- SMTP (email) server and forwarding
