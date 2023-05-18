@@ -48,7 +48,7 @@ export const createMailer = () => {
       from: adminEmail,
       replyTo: adminEmail,
       to: [config.mailForwardEmail],
-      subject: `Email forwarded from ${recipients.map(r => r.value[0].address).join(',')} (sent from ${parsedMail.from?.value[0].address})`, // prettier-ignore
+      subject: `Email forwarded from ${JSON.stringify(recipients.map(r => r.value[0].address))} (sent from ${JSON.stringify(parsedMail.from?.value[0].address)})`, // prettier-ignore
       text: JSON.stringify(parsedMail, null, 2),
       disableUrlAccess: true,
       disableFileAccess: true,

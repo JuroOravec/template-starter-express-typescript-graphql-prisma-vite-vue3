@@ -1,5 +1,6 @@
 # Module: core
 
-This module houses code that deals with the server or core dependencies themselves.
+This module houses code with underlying or supportive features that can be used
+anywhere else in the app - e.g. logging or app config.
 
 There should be NO domain / business logic here.

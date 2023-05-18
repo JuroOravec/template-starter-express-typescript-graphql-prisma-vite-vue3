@@ -3,7 +3,7 @@ import createError from 'http-errors';
 import type { Handler, ErrorRequestHandler } from 'express';
 import Joi from 'joi';
 
-import { logger } from './lib/logger';
+import { logger } from '../core/lib/logger';
 
 /**
  * Handler that parse request body.

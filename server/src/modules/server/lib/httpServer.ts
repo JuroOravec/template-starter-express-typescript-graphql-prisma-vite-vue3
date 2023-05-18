@@ -2,31 +2,32 @@ import express, { Express } from 'express';
 import { expressMiddleware } from '@apollo/server/express4';
 import compression from 'compression';
 import passport from 'passport';
+import type { RedisClientType } from 'redis';
 
-import { bodyParserHandler } from './modules/core/handlers';
+import { bodyParserHandler } from '../handlers';
 import {
   corsHandler,
   csrfHandler,
   helmetHandler,
-} from './modules/security/handlers';
-import { createSessionHandler } from './modules/session/handlers';
+} from '../../security/handlers';
+import { createSessionHandler } from '../../session/handlers';
 import {
   errorHandler,
   notFoundHandler,
   createValidateRequestHandler,
-} from './modules/core/handlers';
-import { apolloServer } from './apis/graphql/apolloServer';
-import { createRedisClient } from './datasources/redis/redisClient';
-import { createAuthRouter } from './modules/auth/router';
-import { authHandler } from './modules/auth/handlers';
-import { createCoreRouter } from './modules/core/router';
-import { config } from './modules/core/lib/config';
+} from '../handlers';
+import { apolloServer } from '@/apis/graphql/apolloServer';
+import { createAuthRouter } from '../../auth/router';
+import { authHandler } from '../../auth/handlers';
+import { createServerRouter } from '../router';
+import { setupHealthcheck } from './healthcheck';
 
-export const createExpressServer = async (): Promise<Express> => {
+export const createExpressServer = async ({
+  redisClient,
+}: {
+  redisClient: RedisClientType<any, any, any>;
+}): Promise<Express> => {
   const app = express();
-  const { redisClient, redisConnect } = createRedisClient({
-    url: config.redisUrl,
-  });
 
   // Get real ip from nginx proxy
   app.set('trust proxy', true);
@@ -45,13 +46,16 @@ export const createExpressServer = async (): Promise<Express> => {
   );
 
   // Routes
-  // app.use('/graphql', authHandler); // TODO: Enable this?
-  app.get('/hello', createCoreRouter());
+  app.use('/graphql', authHandler); // TODO: Disable for dev?
+  app.get('/hello', createServerRouter());
   app.use('/auth', createAuthRouter());
+  setupHealthcheck(app);
 
   // Set up Apollo server
-  // @ts-ignore - Silence this error https://stackoverflow.com/questions/66858790
-  await apolloServer.start();
+  await (
+    // @ts-ignore Silence this error https://stackoverflow.com/questions/66858790
+    apolloServer.start()
+  ); // prettier-ignore
   app.use(
     '/graphql',
     expressMiddleware(apolloServer, {
@@ -65,8 +69,6 @@ export const createExpressServer = async (): Promise<Express> => {
   );
 
   app.use(notFoundHandler, errorHandler);
-
-  await redisConnect();
 
   return app;
 };

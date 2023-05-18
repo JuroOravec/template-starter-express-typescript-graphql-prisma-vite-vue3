@@ -1,20 +1,9 @@
 import { createTerminus } from '@godaddy/terminus';
 
-import { logger } from '../lib/logger';
+import { logger } from '../../core/lib/logger';
 
-/** Given an Express app, configure it to gracefully  */
-export const setupServerChassis = <T>(app: T): void => {
-  process.on('unhandledRejection', (err): void => {
-    // let uncaughtException handler deal with the error
-    throw err;
-  });
-
-  process.on('uncaughtException', (err): void => {
-    logger.error('Uncaught exception', err);
-
-    process.exit(1);
-  });
-
+/** Given Express app, configure healthcheck endpoint using terminus */
+export const setupHealthcheck = <T>(app: T): void => {
   const onSignal = (): any => {
     logger.info('Kill signal received');
   };
