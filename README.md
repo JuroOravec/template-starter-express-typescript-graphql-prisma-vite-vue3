@@ -4,7 +4,7 @@
 
 - Apollo GraphQL
 - TypeScript
-- Prisma with Postgres
+- Prisma + Postgres + automatic backups
 - Authentication layer with Express + Passport.js
 - User sessions with Express + Redis
 - Prettier with git hook

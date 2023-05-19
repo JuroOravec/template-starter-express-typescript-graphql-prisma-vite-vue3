@@ -6,6 +6,7 @@ services:
   #   ports:
   #     - "80:80"
   #     - "443:443"
+  #   restart: always
   #   volumes:
   #     - ./volumes/nginx:/etc/nginx/conf.d
   #     - ./volumes/certbot/conf:/etc/letsencrypt
@@ -15,6 +16,7 @@ services:
 
   # certbot:
   #   image: certbot/certbot
+  #   restart: always
   #   volumes:
   #     - ./volumes/certbot/conf:/etc/letsencrypt
   #     - ./volumes/certbot/www:/var/www/certbot
@@ -22,13 +24,15 @@ services:
   #   entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
 
   postgres:
-    image: postgres:15.3-alpine
+    image: postgres:14.8-alpine
     restart: always
     ports:
       - 5432:5432
+    volumes:
+      - ./volumes/pg:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: ${SERVER_DB_USER}
-      POSTGRES_PASSWORD: ${SERVER_DB_PASSWORD}
+      POSTGRES_PASSWORD: ${SERVER_DB_PWD}
       POSTGRES_DB: ${SERVER_DB_NAME}
 
   redis:
@@ -37,24 +41,23 @@ services:
     ports:
       - 6379:6379
 
-  # node_server:
-  #   build: .
-  #   expose:
-  #     - '3000' # Disable if not using HTTP server
-  #     - '25' # Disable if not using SMTP server
-  #   ports:
-  #     - 3000:3000 # Disable if not using HTTP server
-  #     - 25:25 # Disable if not using SMTP server
-  #   restart: always
-  #   command: npm run start
-  #   environment:
-  #     VIRTUAL_HOST: localhost
-  #     SERVER_DB_URL: ${SERVER_DB_URL}
-  #     NODE_ENV: ${NODE_ENV}
-  #     APP_ENV: ${APP_ENV}
-  #   depends_on:
-  #     - postgres
-  #     - redis
+  cron:
+    build: ./cron
+    image: ${CRON_IMAGE_TAG}
+    container_name: cron
+    restart: always
+    volumes:
+      - ./volumes/cron:/etc/supercronic
+    command: supercronic -debug /etc/supercronic/crontab
+    environment:
+      POSTGRES_DB_URL: ${SERVER_DB_URL}
+      POSTGRES_DB_NAME: ${SERVER_DB_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_S3_BACKUP_DB_KEY}
+      AWS_SECRET_ACCESS_KEY: ${AWS_S3_BACKUP_DB_PWD}
+      BACKUP_BUCKET_NAME: ${BACKUP_BUCKET_NAME}
+      # Used for knowing which env it's in
+      APP_ENV: ${APP_ENV}
+
 
   # If you need a full-fledged mail server, you can use this
   # See https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/#using-dms-as-a-local-mail-relay-for-containers

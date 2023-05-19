@@ -35,11 +35,11 @@
     - Prepend with `proj-name--{prod,stg,dev}--`
 
 11. Connect to the vm using the ssh console available via UI. Run the last step of the setup script to get the PRIVATE KEY
-    then paste it to Gitlab > CI/CD Settings > Variables > {`SSH_PROD_SERVER_PRIVATE_KEY`, `SSH_STAGE_SERVER_PRIVATE_KEY`}
+    then paste it to Gitlab > CI/CD Settings > Variables > {`SSH_SERVER_PRIVATE_KEY_PROD`, `SSH_SERVER_PRIVATE_KEY_STAGE`}
 
     ![Gitlab CI variables](./vm-gitlab-variables.png)
 
-12. Open the droplet dashboard URL to get the server's IP. Then, in `gitlab-ci.yml` update {`PROD_SERVER_IP`, `STAGE_SERVER_IP`}.
+12. Open the droplet dashboard URL to get the server's IP. Then, in `gitlab-ci.yml` update {`SERVER_IP_PROD`, `SERVER_IP_STAGE`}.
 
 #### Verify the instance works
 
@@ -133,3 +133,24 @@ Alternatives:
 
 - [AWS ECR (Elastic Container Registry)](https://aws.amazon.com/ecr/pricing/)
 - [Other registries](https://simply-how.com/free-docker-container-registry)
+
+### Cleanup
+
+Sometimes, the server instance might cobble up resources. In such case, follow these instructions.
+
+#### Disk usage
+
+1. Identify the cause of large ([see thread](https://unix.stackexchange.com/questions/113840))
+
+    ```sh
+    du -hx --max-depth=1 / | sort -hr
+    du -hx --max-depth=1 /var | sort -hr
+    ...
+    ```
+
+2. [Delete Docker cache](https://forums.docker.com/t/how-to-delete-cache/5753)
+
+    ```sh
+    docker system prune -a -f
+    docker volume prune -f
+    ```

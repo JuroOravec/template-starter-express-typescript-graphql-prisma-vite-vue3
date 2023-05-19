@@ -95,7 +95,7 @@ ufw allow 993
 ufw --force enable
 ufw status verbose
 
-## 6. Copy the private key and set it to SSH_PROD_SERVER_PRIVATE_KEY or SSH_STAGE_SERVER_PRIVATE_KEY
+## 6. Copy the private key and set it to SSH_SERVER_PRIVATE_KEY_PROD or SSH_SERVER_PRIVATE_KEY_STAGE
 ##    in Gitlab > CI/CD Settings > Variables.
 ##    This step gives the worker in Gitlab CI the correct ssh key to connect
 ## NOTE: THIS IS MANUAL STEP!
