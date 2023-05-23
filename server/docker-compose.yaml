@@ -78,7 +78,7 @@ services:
       - postgres
       - redis
 
-      # See https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/#using-dms-as-a-local-mail-relay-for-containers
+  # See https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/#using-dms-as-a-local-mail-relay-for-containers
   # mailserver:
   #   # NOTE: Do not upgrade beyond 12.0.
   #   # This MR broke the option to forward email
