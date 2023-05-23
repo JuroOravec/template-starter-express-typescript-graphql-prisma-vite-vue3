@@ -4,8 +4,8 @@ services:
   # nginx:
   #   image: nginx:1.24-alpine
   #   ports:
-  #     - "80:80"
-  #     - "443:443"
+  #     - '80:80'
+  #     - '443:443'
   #   restart: always
   #   volumes:
   #     - ./volumes/nginx:/etc/nginx/conf.d
@@ -27,9 +27,7 @@ services:
     image: postgres:14.8-alpine
     restart: always
     ports:
-      - 5432:5432
-    volumes:
-      - ./volumes/pg:/var/lib/postgresql/data
+      - '5432:5432'
     environment:
       POSTGRES_USER: ${SERVER_DB_USER}
       POSTGRES_PASSWORD: ${SERVER_DB_PWD}
@@ -39,25 +37,24 @@ services:
     image: redis:7.0-alpine
     restart: always
     ports:
-      - 6379:6379
+      - '6379:6379'
 
-  cron:
-    build: ./cron
-    image: ${CRON_IMAGE_TAG}
-    container_name: cron
-    restart: always
-    volumes:
-      - ./volumes/cron:/etc/supercronic
-    command: supercronic -debug /etc/supercronic/crontab
-    environment:
-      POSTGRES_DB_URL: ${SERVER_DB_URL}
-      POSTGRES_DB_NAME: ${SERVER_DB_NAME}
-      AWS_ACCESS_KEY_ID: ${AWS_S3_BACKUP_DB_KEY}
-      AWS_SECRET_ACCESS_KEY: ${AWS_S3_BACKUP_DB_PWD}
-      BACKUP_BUCKET_NAME: ${BACKUP_BUCKET_NAME}
-      # Used for knowing which env it's in
-      APP_ENV: ${APP_ENV}
-
+  # cron:
+  #   build: ./cron
+  #   image: ${CRON_IMAGE_TAG}
+  #   container_name: cron
+  #   restart: always
+  #   volumes:
+  #     - ./volumes/cron:/etc/supercronic
+  #   command: supercronic -debug /etc/supercronic/crontab
+  #   environment:
+  #     POSTGRES_DB_URL: ${SERVER_DB_URL}
+  #     POSTGRES_DB_NAME: ${SERVER_DB_NAME}
+  #     AWS_ACCESS_KEY_ID: ${AWS_S3_BACKUP_DB_KEY}
+  #     AWS_SECRET_ACCESS_KEY: ${AWS_S3_BACKUP_DB_PWD}
+  #     BACKUP_BUCKET_NAME: ${BACKUP_BUCKET_NAME}
+  #     # Used for knowing which env it's in
+  #     APP_ENV: ${APP_ENV}
 
   # If you need a full-fledged mail server, you can use this
   # See https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/#using-dms-as-a-local-mail-relay-for-containers

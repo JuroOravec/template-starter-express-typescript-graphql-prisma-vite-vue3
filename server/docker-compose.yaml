@@ -4,8 +4,8 @@ services:
   nginx:
     image: nginx:1.24-alpine
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     restart: always
     volumes:
       - ./volumes/nginx:/etc/nginx/conf.d
@@ -27,9 +27,12 @@ services:
     # Using v14 because I couldn't get pg_dump for v15 for cron container.
     # (it uses Amazon Linux 2, and that had only postgres v14 available)
     image: postgres:14.8-alpine
+    restart: always
+    ports:
+      # Allow connection only from other containers and host
+      - '127.0.0.1:5432:5432'
     volumes:
       - ./volumes/pg:/var/lib/postgresql/data
-    restart: always
     environment:
       POSTGRES_USER: ${SERVER_DB_USER}
       POSTGRES_PASSWORD: ${SERVER_DB_PWD}
@@ -48,7 +51,6 @@ services:
       - ./volumes/cron:/etc/supercronic
     command: supercronic -debug -sentry-dsn ${CRON_SENTRY_DNS} /etc/supercronic/crontab
     environment:
-      # E.g. postgres://user:pwd@postgres:5432/db_name?schema=public
       POSTGRES_DB_URL: ${SERVER_DB_URL}
       POSTGRES_DB_NAME: ${SERVER_DB_NAME}
       AWS_ACCESS_KEY_ID: ${AWS_S3_BACKUP_DB_KEY}
@@ -60,11 +62,9 @@ services:
   node_server:
     build: .
     image: ${NODE_SERVER_IMAGE_TAG}
-    # TODO - remove once in actual production
     expose:
-      - '3000'
+      - '3000' # Expose only to nginx
     ports:
-      - '3000:3000'
       - '25:25'
     restart: always
     command: npm run start
@@ -73,12 +73,12 @@ services:
       APP_ENV: ${APP_ENV}
       MAIL_RELAY_PASSWORD: ${MAIL_RELAY_PASSWORD}
       # Used by Prisma
-      SERVER_DB_URL: "${SERVER_DB_URL}"
+      SERVER_DB_URL: ${SERVER_DB_URL}
     depends_on:
       - postgres
       - redis
 
-  # See https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/#using-dms-as-a-local-mail-relay-for-containers
+      # See https://docker-mailserver.github.io/docker-mailserver/latest/examples/tutorials/basic-installation/#using-dms-as-a-local-mail-relay-for-containers
   # mailserver:
   #   # NOTE: Do not upgrade beyond 12.0.
   #   # This MR broke the option to forward email
