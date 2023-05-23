@@ -1,0 +1,23 @@
+########################
+# 2.2 STAGE DEPLOY JOBS
+########################
+
+# server-db-migrate-stg:
+#   only:
+#     - staging
+#   when: manual
+#   image: gotechnies/alpine-ssh
+#   script:
+#     - sh ./scripts/gitlab-ci.sh server-db-migrate-stg
+
+########################
+# 2.2 PROD DEPLOY JOBS
+########################
+
+server-db-migrate-prod:
+  only:
+    - main
+  when: manual
+  image: gotechnies/alpine-ssh
+  script:
+    - sh ./scripts/gitlab-ci.sh server-db-migrate-prod

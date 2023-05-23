@@ -49,25 +49,23 @@
 # 1. SETUP
 ########################
 
-image: creatiwww/docker-compose:latest
-
 services:
   ## See https://forum.gitlab.com/t/why-services-docker-dind-is-needed-while-already-having-image-docker/43534
   - docker:dind
 
 variables:
   # SERVER_IP_STAGE: 10.10.10.1
-  SERVER_IP_PROD: 10.10.10.2
+  SERVER_IP_PROD: 209.38.245.244 # DigitalOcean droplet IP
   # SERVER_USER_STAGE: gitlab
   SERVER_USER_PROD: gitlab
   ## Tags used for deployment
-  ## E.g. registry.gitlab.com/org-name/proj-name/server-dev:latest
+  ## E.g. registry.gitlab.com/yodese/yodese-site/server-dev:latest
   SERVER_TAG_LATEST: $CI_REGISTRY_IMAGE/server-$CI_COMMIT_REF_NAME:latest
-  ## E.g. registry.gitlab.com/org-name/proj-name/server-dev:526490c1
+  ## E.g. registry.gitlab.com/yodese/yodese-site/server-dev:526490c1
   SERVER_TAG_COMMIT: $CI_REGISTRY_IMAGE/server-$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
-  ## E.g. registry.gitlab.com/org-name/proj-name/server-dev:latest
+  ## E.g. registry.gitlab.com/yodese/yodese-site/server-dev:latest
   CRON_TAG_LATEST: $CI_REGISTRY_IMAGE/cron-$CI_COMMIT_REF_NAME:latest
-  ## E.g. registry.gitlab.com/org-name/proj-name/server-dev:526490c1
+  ## E.g. registry.gitlab.com/yodese/yodese-site/server-dev:526490c1
   CRON_TAG_COMMIT: $CI_REGISTRY_IMAGE/cron-$CI_COMMIT_REF_NAME:$CI_COMMIT_SHORT_SHA
 
 stages:
@@ -87,29 +85,17 @@ stages:
 #   stage: test
 #   only:
 #     - staging
+#   image: gotechnies/alpine-ssh
 #   script:
-#     - eval $(ssh-agent -s)
-#     ## See https://stackoverflow.com/a/56163560/9788634
-#     - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-#     ## Fix this issue https://codeql.github.com/codeql-query-help/python/py-paramiko-missing-host-key-validation/
-#     ## https://www.techrepublic.com/article/how-to-easily-add-an-ssh-fingerprint-to-your-knownhosts-file-in-linux/
-#     - mkdir ~/.ssh && ssh-keyscan -H $SERVER_IP_STAGE >> ~/.ssh/known_hosts
-#     ## See https://serverfault.com/q/638628/1021637
-#     - ssh -vT "$SERVER_USER_STAGE@$SERVER_IP_STAGE"
+#     - sh ./scripts/gitlab-ci.sh server-ssh-stg
 
 server-ssh-prod:
   stage: test
   only:
     - main
+  image: gotechnies/alpine-ssh
   script:
-    - eval $(ssh-agent -s)
-    ## See https://stackoverflow.com/a/56163560/9788634
-    - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    ## Fix this issue https://codeql.github.com/codeql-query-help/python/py-paramiko-missing-host-key-validation/
-    ## https://www.techrepublic.com/article/how-to-easily-add-an-ssh-fingerprint-to-your-knownhosts-file-in-linux/
-    - mkdir ~/.ssh && ssh-keyscan -H $SERVER_IP_PROD >> ~/.ssh/known_hosts
-    ## See https://serverfault.com/q/638628/1021637
-    - ssh -vT "$SERVER_USER_PROD@$SERVER_IP_PROD"
+    - sh ./scripts/gitlab-ci.sh server-ssh-prod
 
 # Test code
 
@@ -121,9 +107,7 @@ server-lint:
     - dev
   image: node:18-alpine
   script:
-    - cd server
-    - npm ci
-    - npm run lint
+    - sh ./scripts/gitlab-ci.sh server-lint
 
 server-test-unit:
   stage: test
@@ -133,9 +117,7 @@ server-test-unit:
     - dev
   image: node:18-alpine
   script:
-    - cd server
-    - npm ci
-    - npm run test:unit
+    - sh ./scripts/gitlab-ci.sh server-test-unit
 
 ########################
 # 2.2 STAGE DEPLOY JOBS
@@ -145,67 +127,46 @@ server-test-unit:
 #   stage: build-stg
 #   only:
 #     - staging
+#   image: docker:latest
 #   script:
-#     - cd server
-#     - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE
-#     - mv .env.dev .env
-#     - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_COMMIT" >> .env
-#     - echo -e "\nCRON_IMAGE_TAG=$CRON_TAG_COMMIT" >> .env
-#     - echo -e "\nMAIL_RELAY_PASSWORD=$MAIL_RELAY_PASSWORD" >> .env
-#     - docker-compose build
-#     - docker-compose push
-#     - echo Image $SERVER_TAG_COMMIT added to registry $CI_REGISTRY_IMAGE
+#     - sh ./scripts/gitlab-ci.sh server-build-stg
 
 # server-deploy-stg:
 #   stage: deploy-stg
 #   only:
 #     - staging
+#   image: gotechnies/alpine-ssh
 #   script:
-#     - cd server
-#     - mv .env.dev .env
-#     - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_COMMIT" >> .env
-#     - echo -e "\nCRON_IMAGE_TAG=$CRON_TAG_COMMIT" >> .env
-#     - echo -e "\nMAIL_RELAY_PASSWORD=$MAIL_RELAY_PASSWORD" >> .env
-#     - echo -e "\nAWS_S3_BACKUP_DB_KEY=$AWS_S3_BACKUP_DB_STAGE_KEY" >> .env
-#     - echo -e "\nAWS_S3_BACKUP_DB_PWD=$AWS_S3_BACKUP_DB_STAGE_PWD" >> .env
-#     - echo -e "\nSERVER_DB_PWD=$SERVER_DB_PWD_STAGE" >> .env
-#     - |
-#       # Load vars from .env
-#       export $(grep -v '^#' .env | xargs)
-#       # Add SERVER_DB_URL if it's not defined
-#       if [ -z "$SERVER_DB_URL" ]; then
-#         # E.g. postgres://user:pwd@postgres:5432/db_name?schema=public
-#         echo -e "\nSERVER_DB_URL=postgres://${SERVER_DB_USER}:${SERVER_DB_PWD}@postgres:5432/${SERVER_DB_NAME}?schema=public" >> .env
-#       fi
-#     - eval $(ssh-agent -s)
-#     - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-#     - mkdir ~/.ssh && ssh-keyscan -H $SERVER_IP_STAGE >> ~/.ssh/known_hosts
-#     ## NOTE: using `docker-compose -H "ssh://...` did not work
-#     ##       Instead, we manually copy files to server, SSH in, and run docker-compose
-#     - scp -r .env docker-compose.yaml Dockerfile cron mailserver.env scripts volumes $SERVER_USER_STAGE@$SERVER_IP_STAGE:~
-#     - |
-#       ssh $SERVER_USER_STAGE@$SERVER_IP_STAGE "
-#         docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE;
-#         docker-compose down --remove-orphans;
-#         docker-compose pull;
-#         docker-compose up -d;
-#         docker system prune -a -f;
-#         docker volume prune -f;"
+#     - sh ./scripts/gitlab-ci.sh server-deploy-stg
 
-# server-restore-db-stg:
+# server-db-backup-stg:
 #   stage: deploy-stg
 #   only:
 #     - staging
 #   when: manual
+#   image: gotechnies/alpine-ssh
 #   script:
-#     - cd server
-#     - eval $(ssh-agent -s)
-#     - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-#     - mkdir ~/.ssh && ssh-keyscan -H $SERVER_IP_STAGE >> ~/.ssh/known_hosts
-#     # Connect to server then connect to cron container to run db restore script
-#     # The DB version to which the db will be restored is set via
-#     # $SERVER_DB_RESTORE_FILE_STAGE in Gitlab CI/CD variables
-#     - ssh $SERVER_USER_STAGE@$SERVER_IP_STAGE "docker exec cron /bin/bash -c \"/etc/supercronic/scripts/postgres-backup.sh restore $SERVER_DB_RESTORE_FILE_STAGE\""
+#     - sh ./scripts/gitlab-ci.sh server-db-backup-stg
+
+## Triggered as a separate pipeline (which needs to be manually started too)
+## to give users a chance to recover from accidental starts
+# server-db-migrate-stg:
+#   stage: deploy-stg
+#   only:
+#     - staging
+#   when: manual
+#   trigger:
+#     include: .gitlab-ci/server-db-migrate.yml
+
+## Triggered as a separate pipeline (which needs to be manually started too)
+## to give users a chance to recover from accidental starts
+# server-db-restore-stg:
+#   stage: deploy-stg
+#   only:
+#     - staging
+#   when: manual
+#   trigger:
+#     include: .gitlab-ci/server-db-restore.yml
 
 ########################
 # 2.2 PROD DEPLOY JOBS
@@ -215,64 +176,44 @@ server-build-prod:
   stage: build-prod
   only:
     - main
+  image: docker:latest
   script:
-    - cd server
-    - docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE
-    - mv .env.prd .env
-    - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_LATEST" >> .env
-    - echo -e "\nCRON_IMAGE_TAG=$CRON_TAG_LATEST" >> .env
-    - docker-compose build
-    - docker-compose push
-    - echo Image $SERVER_TAG_LATEST added to registry $CI_REGISTRY_IMAGE
+    - sh ./scripts/gitlab-ci.sh server-build-prod
 
 server-deploy-prod:
   stage: deploy-prod
   only:
     - main
   when: manual
+  image: gotechnies/alpine-ssh
   script:
-    - cd server
-    - mv .env.prd .env
-    - echo -e "\nNODE_SERVER_IMAGE_TAG=$SERVER_TAG_LATEST" >> .env
-    - echo -e "\nCRON_IMAGE_TAG=$CRON_TAG_LATEST" >> .env
-    - echo -e "\nMAIL_RELAY_PASSWORD=$MAIL_RELAY_PASSWORD" >> .env
-    - echo -e "\nAWS_S3_BACKUP_DB_KEY=$AWS_S3_BACKUP_DB_KEY_PROD" >> .env
-    - echo -e "\nAWS_S3_BACKUP_DB_PWD=$AWS_S3_BACKUP_DB_PWD_PROD" >> .env
-    - echo -e "\nSERVER_DB_PWD=$SERVER_DB_PWD_PROD" >> .env
-    - |
-      # Load vars from .env
-      export $(grep -v '^#' .env | xargs)
-      # Add SERVER_DB_URL if it's not defined
-      if [ -z "$SERVER_DB_URL" ]; then
-        # E.g. postgres://user:pwd@postgres:5432/db_name?schema=public
-        echo -e "\nSERVER_DB_URL=postgres://${SERVER_DB_USER}:${SERVER_DB_PWD}@postgres:5432/${SERVER_DB_NAME}?schema=public" >> .env
-      fi
-    - eval $(ssh-agent -s)
-    - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - mkdir ~/.ssh && ssh-keyscan -H $SERVER_IP_PROD >> ~/.ssh/known_hosts
-    ## NOTE: using `docker-compose -H "ssh://...` did not work
-    ##       Instead, we manually copy files to server, SSH in, and run docker-compose
-    - scp -r .env docker-compose.yaml Dockerfile cron mailserver.env scripts volumes $SERVER_USER_PROD@$SERVER_IP_PROD:~
-    - |
-      ssh $SERVER_USER_PROD@$SERVER_IP_PROD "
-        docker login -u $CI_DEPLOY_USER -p $CI_DEPLOY_PASSWORD $CI_REGISTRY_IMAGE;
-        docker-compose down --remove-orphans;
-        docker-compose pull;
-        docker-compose up -d;
-        docker system prune -a -f;
-        docker volume prune -f;"
+    - sh ./scripts/gitlab-ci.sh server-deploy-prod
 
-server-restore-db-prod:
+server-db-backup-prod:
   stage: deploy-prod
   only:
     - main
   when: manual
+  image: gotechnies/alpine-ssh
   script:
-    - cd server
-    - eval $(ssh-agent -s)
-    - echo "$GITLAB_CI_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
-    - mkdir ~/.ssh && ssh-keyscan -H $SERVER_IP_PROD >> ~/.ssh/known_hosts
-    # Connect to server then connect to cron container to run db restore script
-    # The DB version to which the db will be restored is set via
-    # $SERVER_DB_RESTORE_FILE_PROD in Gitlab CI/CD variables
-    - ssh $SERVER_USER_PROD@$SERVER_IP_PROD "docker exec cron /bin/bash -c \"/etc/supercronic/scripts/postgres-backup.sh restore $SERVER_DB_RESTORE_FILE_PROD\""
+    - sh ./scripts/gitlab-ci.sh server-db-backup-prod
+
+## Triggered as a separate pipeline (which needs to be manually started too)
+## to give users a chance to recover from accidental starts
+server-db-migrate-prod:
+  stage: deploy-prod
+  only:
+    - main
+  when: manual
+  trigger:
+    include: .gitlab-ci/server-db-migrate.yml
+
+## Triggered as a separate pipeline (which needs to be manually started too)
+## to give users a chance to recover from accidental starts
+server-db-restore-prod:
+  stage: deploy-prod
+  only:
+    - main
+  when: manual
+  trigger:
+    include: .gitlab-ci/server-db-restore.yml
