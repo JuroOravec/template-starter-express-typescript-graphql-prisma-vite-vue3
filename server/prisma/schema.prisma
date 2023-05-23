@@ -1,10 +1,16 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
 datasource db {
+  // NOTE: "sqlite" is selected only for the purpose of this template.
+  //   If you plan to work with PostgreSQL, then:
+  //     1. Change provider to "postgres"
+  //     2. Delete the current migrations
+  //     3. Start up a (local) postgreSQL database
+  //     4. run `prisma migrate dev` to create migrations against that database instance
   provider = "sqlite"
   url      = env("SERVER_DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
 }
 
 model Post {
