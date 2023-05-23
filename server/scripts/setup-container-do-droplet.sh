@@ -97,7 +97,7 @@ ufw status verbose
 
 ## 6. Copy the private key and set it to SSH_SERVER_PRIVATE_KEY_PROD or SSH_SERVER_PRIVATE_KEY_STAGE
 ##    in Gitlab > CI/CD Settings > Variables.
-##    This step gives the worker in Gitlab CI the correct ssh key to connect
+##    This step gives us the correct ssh key to connect
 ## NOTE: THIS IS MANUAL STEP!
 su - "$DEPLOY_USER"
 cat ~/.ssh/id_rsa
@@ -110,6 +110,6 @@ logout
 echo -e "\n<REPLACE_WITH_PUBLIC_KEY>" >> ~/.ssh/authorized_keys
 echo -e "\n<REPLACE_WITH_PUBLIC_KEY>" >> /home/"$DEPLOY_USER"/.ssh/authorized_keys
 
-# 8. Once done and you can deploy the project onto remote server,
-#    then give it a domain, and head over to `letsencrypt-init.sh`
-#    script to set up SSL cert
+## 8. Once done and you can deploy the project onto remote server,
+##    then give it a domain, and head over to `letsencrypt-init.sh`
+##    script to set up SSL cert

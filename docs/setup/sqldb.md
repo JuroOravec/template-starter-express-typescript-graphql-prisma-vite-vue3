@@ -47,6 +47,8 @@ available at `localhost:5432`.
 Have a look at `docker-compose.yml` and `schema.prisma` to see
 how to interact with PostgreSQL database.
 
+Also see <https://betterprogramming.pub/how-to-provision-a-cheap-postgresql-database-in-aws-ec2-9984ff3ddaea>
+
 ### Database backup
 
 To run regular backups of the DB, we run this setup:
