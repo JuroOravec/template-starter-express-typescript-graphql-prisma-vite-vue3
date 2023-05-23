@@ -1,9 +1,10 @@
+import type { User } from '@prisma/client';
+
 import { encryptPassword } from '@/modules/auth/utils/encryptPassword';
-import type { Prisma, User } from '@prisma/client';
-
 import { serverDbClient } from './serverDbClient';
+import { uuid } from '@/modules/core/utils/uuid';
 
-export const getUserById = (id: number): Promise<User | null> =>
+export const getUserById = (id: string): Promise<User | null> =>
   serverDbClient.user.findUnique({ where: { id } });
 
 export const getUserByEmail = (email: string): Promise<User | null> =>
@@ -16,10 +17,11 @@ export const createUser = async ({
   email: string;
   plaintextPassword: string;
 }): Promise<User | null> => {
-  const user: Prisma.UserCreateInput = {
-    email,
-    password: await encryptPassword(plaintextPassword),
-  };
-
-  return serverDbClient.user.create({ data: user });
+  return serverDbClient.user.create({
+    data: {
+      id: uuid(),
+      email,
+      password: await encryptPassword(plaintextPassword),
+    },
+  });
 };

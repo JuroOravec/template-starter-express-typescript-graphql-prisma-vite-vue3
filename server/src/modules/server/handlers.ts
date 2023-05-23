@@ -1,17 +1,9 @@
-import bodyParser from 'body-parser';
-import createError from 'http-errors';
+import createError, { HttpError } from 'http-errors';
 import type { Handler, ErrorRequestHandler } from 'express';
 import Joi from 'joi';
+import statuses from 'statuses';
 
 import { logger } from '../core/lib/logger';
-
-/**
- * Handler that parse request body.
- *
- * Used as one of the first handlers, so that all subsequent
- * handlers have the body content available nicely parsed.
- */
-export const bodyParserHandler: Handler = bodyParser.json();
 
 /**
  * Handler that formats errors
@@ -22,16 +14,22 @@ export const bodyParserHandler: Handler = bodyParser.json();
  * THEN, the response returns an error.
  */
 // prettier-ignore
-export const errorHandler: ErrorRequestHandler = async (err, _req, res, next) => {
+export const errorHandler: ErrorRequestHandler = async (err: HttpError, _req, res, next) => {
   if (!err) {
     return next();
   }
 
   logger.error(err);
-  res.status(err.status).json({
+
+  // See https://github.com/jshttp/http-errors
+  const errStatus = err.status || 500;
+  const isExposed = err.expose || (err.expose == null && errStatus < 500);
+  
+  res.status(errStatus).json({
     error: {
-      status: err.status,
-      message: err.message,
+      name: isExposed ? err.name : 'InternalServerError',
+      status: errStatus,
+      message: isExposed ? err.message : statuses(500),
     },
   });
 };

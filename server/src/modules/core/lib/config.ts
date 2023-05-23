@@ -1,15 +1,15 @@
 import Joi from 'joi';
 
+import { createConfig } from '../utils/configUtils';
+import type { ArrVal } from '../utils/types';
+
 /**
  * App environements.
  *
  * This is different from NODE_ENV, as AppEnv describes OUR settings.
  */
-enum AppEnv {
-  LOCAL = 'local',
-  DEV = 'dev',
-  PRD = 'prd',
-}
+const APP_ENV = ['local', 'dev', 'prd'] as const;
+type AppEnv = ArrVal<typeof APP_ENV>;
 
 interface Config {
   httpPort: number;
@@ -23,6 +23,7 @@ interface Config {
 
   sessionCookieSecret: string;
 
+  // Email & SMTP server
   /** Email of this server - AKA where people can send email to */
   mailServerEmail: string;
   /** Email to which incoming emails will be forwarded to */
@@ -31,11 +32,16 @@ interface Config {
   mailRelayPort: number;
   mailRelayUser: string;
   mailRelayPassword: string;
+
+  // Error handling
+  sentryDns: string | null;
 }
 
 const envVars = {
   mailRelayPassword: process.env.MAIL_RELAY_PASSWORD,
   appEnv: process.env.APP_ENV,
+  sessionCookieSecret: process.env.SERVER_SESSION_COOKIE_SECRET ?? null,
+  sentryDns: process.env.SENTRY_DNS ?? null,
 };
 
 /**
@@ -45,7 +51,7 @@ const envVars = {
  */
 const configs: Record<AppEnv, Config> = Object.freeze({
   /** Config for running things on our own machine, with services possibly outside of docker-compose */
-  [AppEnv.LOCAL]: {
+  local: {
     httpPort: 3000,
     stmpPort: 25,
     baseUrl: 'http://localhost',
@@ -53,16 +59,17 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     enableCsrf: false,
     enableCsp: false,
     enableCors: false,
-    sessionCookieSecret: 'cookieSecretDev', // TODO: Move this to env vars - CHANGE IN OWN PROJECT
+    sessionCookieSecret: envVars.sessionCookieSecret!,
     mailServerEmail: 'admin@system-mail.example.com',
     mailForwardEmail: 'example@example.com',
     mailRelayHost: 'smtp.sendgrid.net',
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
+    sentryDns: null,
   },
   /** Config for running things on our own machine or dev server, all services communicate within the docker network */
-  [AppEnv.DEV]: {
+  dev: {
     httpPort: 3000,
     stmpPort: 25,
     baseUrl: 'http://localhost',
@@ -70,16 +77,17 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     enableCsrf: false,
     enableCsp: false,
     enableCors: false,
-    sessionCookieSecret: 'cookieSecretDev', // TODO: Move this to env vars - CHANGE IN OWN PROJECT
+    sessionCookieSecret: envVars.sessionCookieSecret!,
     mailServerEmail: 'admin@system-mail.example.com',
     mailForwardEmail: 'example@example.com',
     mailRelayHost: 'smtp.sendgrid.net',
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
+    sentryDns: null,
   },
   /** Prod config - This is how things run on the deployed prod server */
-  [AppEnv.PRD]: {
+  prd: {
     httpPort: 3000,
     stmpPort: 25,
     baseUrl: 'http://localhost',
@@ -87,13 +95,14 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     enableCsrf: true,
     enableCsp: true,
     enableCors: true,
-    sessionCookieSecret: 'cookieSecretPrd', // TODO: Move this to env vars - CHANGE IN OWN PROJECT
+    sessionCookieSecret: envVars.sessionCookieSecret!,
     mailServerEmail: 'admin@system-mail.example.com',
     mailForwardEmail: 'example@example.com',
     mailRelayHost: 'smtp.sendgrid.net',
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
+    sentryDns: envVars.sentryDns,
   },
 });
 
@@ -119,24 +128,18 @@ const configValidationSchema = Joi.object<Config>({
   mailRelayPort: Joi.number().min(1).required(),
   mailRelayUser: Joi.string().min(1),
   mailRelayPassword: Joi.string().min(1),
+  sentryDns: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).allow('', null), // prettier-ignore
 } satisfies Record<keyof Config, Joi.Schema>).required();
 
 const appEnvValidationSchema = Joi.string()
   .required()
   .min(1)
-  .allow(...Object.values(AppEnv));
-
-const createConfig = () => {
-  Object.values(configs).forEach((config) => {
-    Joi.assert(config, configValidationSchema, 'Config validation failed');
-  });
-
-  const appEnv = envVars.appEnv?.toLowerCase() as AppEnv;
-
-  Joi.assert(appEnv, appEnvValidationSchema);
-
-  return configs[appEnv];
-};
+  .allow(...APP_ENV);
 
 /** Config instance based on the current environment */
-export const config = createConfig();
+export const config = createConfig({
+  configs,
+  configSchema: configValidationSchema,
+  appEnv: envVars.appEnv?.toLowerCase() as AppEnv,
+  appEnvSchema: appEnvValidationSchema,
+});

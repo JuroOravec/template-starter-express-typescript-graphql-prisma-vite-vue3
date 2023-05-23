@@ -4,7 +4,7 @@
 
 - Apollo GraphQL
 - TypeScript
-- Prisma + Postgres + automatic backups
+- Prisma + Postgres + automatic backups + manual backups/migrations/restores from Gitlab pipelines
 - Authentication layer with Express + Passport.js
 - User sessions with Express + Redis
 - Prettier with git hook
