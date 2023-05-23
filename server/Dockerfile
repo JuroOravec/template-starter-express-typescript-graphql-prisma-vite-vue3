@@ -30,7 +30,7 @@ COPY ./prisma prisma
 COPY ./src src
 
 # Build
-RUN npm run prisma:generate
+RUN npm run prisma generate
 RUN npm run build
 
 # Production
