@@ -98,6 +98,7 @@
     "module-alias": "^2.2.2",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
+    "php-serialize": "^4.1.1",
     "pino": "^8.14.1",
     "prisma": "^4.14.1",
     "redis": "^4.6.6",
