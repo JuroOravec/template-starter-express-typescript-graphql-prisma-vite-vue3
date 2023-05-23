@@ -2,6 +2,7 @@
 
 cmd="$1"
 expiry_tag_or_backup_filename="$2"
+restore_in_dry_run_mode="$3"
 
 # Verify we can connect to AWS with credentials
 # See https://stackoverflow.com/questions/31836816
@@ -51,14 +52,18 @@ elif [ $cmd == "restore" ]; then
   # gunzip strips the .gz suffix
   DUMP_FILE="${DUMP_FILE_GZ%.*}"
 
-  # See https://www.postgresql.org/docs/current/app-pgrestore.html
-  # And https://stackoverflow.com/questions/2732474
-  pg_restore -v --data-only --dbname="$DB_URL_NO_QUERY_PARAMS" "$DUMP_DIR_LOCAL/$DUMP_FILE"
+  # Skip pg_restore if in dry run
+  if [ -z "$restore_in_dry_run_mode" ]; then
+    # See https://www.postgresql.org/docs/current/app-pgrestore.html
+    # And https://stackoverflow.com/questions/2732474
+    pg_restore -v --data-only --dbname="$DB_URL_NO_QUERY_PARAMS" "$DUMP_DIR_LOCAL/$DUMP_FILE"
+    echo Postgres DB restored from "$DUMP_PATH_REMOTE"
+  else
+    echo Dry run of Postgres DB restore successful
+  fi
 
   # Clean up
   rm "$DUMP_DIR_LOCAL/$DUMP_FILE"
-
-  echo Postgres DB restored from "$DUMP_PATH_REMOTE"
 
 else
   echo Unknown command \""$cmd"\"
