@@ -49,7 +49,7 @@ services:
     restart: always
     volumes:
       - ./volumes/cron:/etc/supercronic
-    command: supercronic -debug -sentry-dsn ${CRON_SENTRY_DNS} /etc/supercronic/crontab
+    command: supercronic -debug -sentry-dsn ${SENTRY_DNS} /etc/supercronic/crontab
     environment:
       POSTGRES_DB_URL: ${SERVER_DB_URL}
       POSTGRES_DB_NAME: ${SERVER_DB_NAME}
@@ -72,6 +72,8 @@ services:
       NODE_ENV: ${NODE_ENV}
       APP_ENV: ${APP_ENV}
       MAIL_RELAY_PASSWORD: ${MAIL_RELAY_PASSWORD}
+      SERVER_SESSION_COOKIE_SECRET: ${SERVER_SESSION_COOKIE_SECRET}
+      SENTRY_DNS: ${SENTRY_DNS}
       # Used by Prisma
       SERVER_DB_URL: ${SERVER_DB_URL}
     depends_on:
