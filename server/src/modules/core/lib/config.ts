@@ -1,5 +1,6 @@
 import Joi from 'joi';
 
+import { PADDLE_IPS } from '@/modules/paygate/constants';
 import { createConfig } from '../utils/configUtils';
 import type { ArrVal } from '../utils/types';
 
@@ -33,6 +34,11 @@ interface Config {
   mailRelayUser: string;
   mailRelayPassword: string;
 
+  // Pay gate
+  paygateAllowedIps: string[];
+  paygatePaddleVendorId: string | null;
+  paygatePaddlePublicKey: string | null;
+
   // Error handling
   sentryDns: string | null;
 }
@@ -40,6 +46,8 @@ interface Config {
 const envVars = {
   mailRelayPassword: process.env.MAIL_RELAY_PASSWORD,
   appEnv: process.env.APP_ENV,
+  paygatePaddleVendorId: process.env.PAYGATE_PADDLE_VENDOR_ID ?? null,
+  paygatePaddlePublicKey: process.env.PAYGATE_PADDLE_PUBLIC_KEY ?? null,
   sessionCookieSecret: process.env.SERVER_SESSION_COOKIE_SECRET ?? null,
   sentryDns: process.env.SENTRY_DNS ?? null,
 };
@@ -66,6 +74,9 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
+    paygateAllowedIps: PADDLE_IPS,
+    paygatePaddleVendorId: null,
+    paygatePaddlePublicKey: null,
     sentryDns: null,
   },
   /** Config for running things on our own machine or dev server, all services communicate within the docker network */
@@ -84,6 +95,9 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
+    paygateAllowedIps: PADDLE_IPS,
+    paygatePaddleVendorId: null,
+    paygatePaddlePublicKey: null,
     sentryDns: null,
   },
   /** Prod config - This is how things run on the deployed prod server */
@@ -102,6 +116,9 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
+    paygateAllowedIps: PADDLE_IPS,
+    paygatePaddleVendorId: envVars.paygatePaddleVendorId,
+    paygatePaddlePublicKey: envVars.paygatePaddlePublicKey,
     sentryDns: envVars.sentryDns,
   },
 });
@@ -128,6 +145,9 @@ const configValidationSchema = Joi.object<Config>({
   mailRelayPort: Joi.number().min(1).required(),
   mailRelayUser: Joi.string().min(1),
   mailRelayPassword: Joi.string().min(1),
+  paygateAllowedIps: Joi.array().items(Joi.string().ip().required()).required(),
+  paygatePaddleVendorId: Joi.string().min(1).allow(null),
+  paygatePaddlePublicKey: Joi.string().min(1).allow(null),
   sentryDns: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).allow('', null), // prettier-ignore
 } satisfies Record<keyof Config, Joi.Schema>).required();
 
