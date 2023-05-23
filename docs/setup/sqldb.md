@@ -38,7 +38,7 @@ We use PostgreSQL docker image as the database.
 ### PostgreSQL
 
 1. To start PostgreSQL database locally, the following command makes the database
-available at `localhost:5432`.
+   available at `localhost:5432`.
 
    ```sh
    npm run docker:start:local
@@ -222,6 +222,11 @@ Generally, when we create a database instance anew, we want to:
 2. Populate the database with previous database backups.
 
 ### Prisma
+
+Learn more:
+
+- <https://www.prisma.io/docs/guides/deployment/deploy-database-changes-with-prisma-migrate>
+- <https://www.prisma.io/docs/guides/migrate/developing-with-prisma-migrate>
 
 #### Cheatsheet
 

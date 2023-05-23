@@ -33,6 +33,12 @@ To minimize exposure...
 - PostgreSQL is accessible only from server instance
 - Node HTTP Server is accessible only via nginx
 
+Learn more:
+
+- <https://stackoverflow.com/questions/22100587>
+- <https://www.digitalocean.com/community/tutorials/how-to-secure-postgresql-against-automated-attacks>
+- <https://serverfault.com/questions/247176>
+
 ## Env vars
 
 You can find configuration being set at different levels:
