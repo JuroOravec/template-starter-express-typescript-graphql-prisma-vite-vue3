@@ -1,4 +1,7 @@
 # Learn more https://github.com/aptible/supercronic/tree/master/cronexpr
+#
+# Order:
+# Seconds Minutes Hours DayOfMonth Month DayOfWeek Year
 
 # Example - print "hello" every minute
 # */1 * * * * echo "hello"
@@ -6,8 +9,8 @@
 # Trigger postgres DB dumps at 2:30AM
 # See https://stackoverflow.com/questions/14710257
 # Daily dump - expires after 7 days
-30 2 * * *    bash /etc/supercronic/scripts/postgres-backup.sh dump 7d
+0 30 2 * * * *    bash /etc/supercronic/scripts/postgres-backup.sh dump 7d
 # Weekly dump - expires after 30 days
-30 2 * * sun  bash /etc/supercronic/scripts/postgres-backup.sh dump 30d
+0 30 2 * * sun *  bash /etc/supercronic/scripts/postgres-backup.sh dump 30d
 # Monthly dump (mid-month) - DOES NOT expire
-30 2 * 15 *   bash /etc/supercronic/scripts/postgres-backup.sh dump
+0 30 2 * 15 * *   bash /etc/supercronic/scripts/postgres-backup.sh dump
