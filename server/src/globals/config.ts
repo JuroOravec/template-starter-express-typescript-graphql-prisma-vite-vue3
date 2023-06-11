@@ -1,6 +1,5 @@
 import Joi from 'joi';
 
-import { PADDLE_IPS } from '@/modules/paygate/constants/ips';
 import type { ArrVal } from '../utils/types';
 
 /**
@@ -44,7 +43,6 @@ interface Config {
   mailRelayPassword: string;
 
   // Pay gate
-  paygateAllowedIps: string[];
   paygatePaddleApiUrl: string;
   paygatePaddleVendorId: string | null;
   paygatePaddleApiKey: string | null;
@@ -88,7 +86,6 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
-    paygateAllowedIps: PADDLE_IPS,
     paygatePaddleApiUrl: 'https://sandbox-vendors.paddle.com/api/2.0',
     paygatePaddleVendorId: envVars.paygatePaddleVendorId,
     paygatePaddleApiKey: envVars.paygatePaddleApiKey,
@@ -113,7 +110,6 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
-    paygateAllowedIps: PADDLE_IPS,
     paygatePaddleApiUrl: 'https://sandbox-vendors.paddle.com/api/2.0',
     paygatePaddleVendorId: envVars.paygatePaddleVendorId,
     paygatePaddleApiKey: envVars.paygatePaddleApiKey,
@@ -138,7 +134,6 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword!,
-    paygateAllowedIps: PADDLE_IPS,
     paygatePaddleApiUrl: 'https://vendors.paddle.com/api/2.0',
     paygatePaddleVendorId: envVars.paygatePaddleVendorId,
     paygatePaddlePublicKey: envVars.paygatePaddlePublicKey,
@@ -165,7 +160,6 @@ const configValidationSchema = Joi.object<Config>({
   mailRelayPort: Joi.number().min(1).required(),
   mailRelayUser: Joi.string().min(1),
   mailRelayPassword: Joi.string().min(1),
-  paygateAllowedIps: Joi.array().items(Joi.string().ip().required()).required(),
   paygatePaddleApiUrl: Joi.string()
     .min(1)
     .uri({ scheme: ['http', 'https'] })

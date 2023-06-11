@@ -3,7 +3,7 @@
 import crypto from 'crypto';
 import { serialize } from 'php-serialize';
 
-import type { PaddleWebhookPayload } from '../types/paddle';
+import type { PaddleWebhookPayload } from '../../datasources/paddle/types';
 
 /**
  * Verify a Paddle webhook payload to confirm it was sent by Paddle.
