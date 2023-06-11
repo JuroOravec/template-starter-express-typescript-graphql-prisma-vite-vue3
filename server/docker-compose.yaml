@@ -11,8 +11,13 @@ services:
       - ./volumes/nginx:/etc/nginx/conf.d
       - ./volumes/certbot/conf:/etc/letsencrypt
       - ./volumes/certbot/www:/var/www/certbot
-    # Reload newly obtained/renewed certificates
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    ## 1. Build Nginx config using envsubst so we can use env vars in it
+    ##    See https://www.baeldung.com/linux/nginx-config-environment-variables#4-a-common-pitfall
+    ## 2. Reload newly obtained/renewed certificates
+    command: "/bin/sh -c 'envsubst \"\\$$ERROR_TRACK_URL \\$$ANALYTICS_URL\" < /etc/nginx/conf.d/app.conf.template > /etc/nginx/conf.d/app.conf && while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    environment:
+      ERROR_TRACK_URL: ${SENTRY_DNS}
+      ANALYTICS_URL: ${MIXPANEL_API_HOST}
 
   certbot:
     image: certbot/certbot

@@ -41,4 +41,28 @@ server {
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
     }
+
+    # Telemetry - Forward to error monitoring ingest
+    location /_t/e {
+        # See https://serverfault.com/a/1042258/1021637
+        proxy_pass  ${ERROR_TRACK_URL};
+        proxy_set_header    Host                $http_host;
+        proxy_set_header    X-Real-IP           $remote_addr;
+        proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+    # Telemety - Forward to analytics ingest
+    location /_t/a {
+        # See https://serverfault.com/a/1042258/1021637
+        proxy_pass  ${ANALYTICS_URL};
+        proxy_set_header    Host                $http_host;
+        proxy_set_header    X-Real-IP           $remote_addr;
+        proxy_set_header    X-Forwarded-For     $proxy_add_x_forwarded_for;
+
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
 }
