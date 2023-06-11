@@ -3,13 +3,9 @@ import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import Joi from 'joi';
 import { omit } from 'lodash';
-import createError from 'http-errors';
+import createHttpError from 'http-errors';
 
-import {
-  createUser,
-  getUserByEmail,
-} from '@/datasources/serverDb/endpointsUser';
-import { logger } from '@/modules/core/lib/logger';
+import { createUser, getUserByEmail } from '@/datasources/prisma/endpoints/user';
 import { verifyPassword } from './utils/encryptPassword';
 
 passport.serializeUser((user: Express.User, done): void => {
@@ -27,16 +23,18 @@ const loginSchema = Joi.object().keys({
 
 passport.use(
   new LocalStrategy(
-    { usernameField: 'email' },
-    async (username, password, done): Promise<any> => {
+    { usernameField: 'email', passReqToCallback: true },
+    async (req, username, password, done): Promise<any> => {
+      const prisma = req.context.prisma;
+
       const { error } = loginSchema.validate({ username, password });
 
       if (error) {
-        return done(createError(400, error));
+        return done(createHttpError(400, error));
       }
 
       try {
-        const user = await getUserByEmail(username);
+        const user = await getUserByEmail(prisma, username);
         if (!user) {
           return done(null, false);
         }
@@ -46,7 +44,7 @@ passport.use(
           return done(null, false);
         }
 
-        return done(null, omit(user, 'password'));
+        return done(null, user); // omit(user, 'password')); // TODO: OMIT PWD ONCE USING IT
       } catch (err) {
         return done(err);
       }
@@ -61,7 +59,7 @@ export const loginHandler: Handler = (req, res, next): void => {
     }
 
     if (!user) {
-      return next(createError(401, 'Invalid credentials'));
+      return next(createHttpError(401, 'Invalid credentials'));
     }
 
     req.logIn(user, (err): any => {
@@ -90,21 +88,22 @@ const singupValidationSchema = Joi.object({
   .unknown();
 
 export const singupHandler: Handler = async (req, res, next) => {
+  const prisma = req.context.prisma;
   const { error } = singupValidationSchema.validate(req);
 
   if (error) {
-    return next(createError(400, error.message));
+    return next(createHttpError(400, error.message));
   }
 
   const { email, password } = req.body;
 
-  const user = await getUserByEmail(email);
+  const user = await getUserByEmail(prisma, email);
 
   if (user) {
-    return next(createError(400, 'User with given email already exists!'));
+    return next(createHttpError(400, 'User with given email already exists!'));
   }
 
-  await createUser({
+  await createUser(prisma, {
     email,
     plaintextPassword: password,
   });
@@ -112,10 +111,8 @@ export const singupHandler: Handler = async (req, res, next) => {
   return next();
 };
 
-export const logoutHandler: Handler = async (req, res, next) => {
-  await new Promise<void>((res, rej) =>
-    req.logout({}, (err) => (err ? rej(err) : res())),
-  );
+export const logoutHandler: Handler = async (req, res, _next) => {
+  await new Promise<void>((res, rej) => req.logout({}, (err) => (err ? rej(err) : res())));
   res.status(200).json({
     data: null,
   });
@@ -128,6 +125,6 @@ export const authHandler: Handler = (req, _res, next): void => {
   if (req.user) {
     next();
   } else {
-    next(createError(401, 'Not authenticated'));
+    next(createHttpError(401, 'Not authenticated'));
   }
 };

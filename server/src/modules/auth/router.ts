@@ -1,11 +1,6 @@
 import { Router } from 'express';
 
-import {
-  authHandler,
-  loginHandler,
-  logoutHandler,
-  singupHandler,
-} from './handlers';
+import { authHandler, loginHandler, logoutHandler, singupHandler } from './handlers';
 
 export const createAuthRouter = () => {
   const authRouter = Router();
@@ -15,7 +10,7 @@ export const createAuthRouter = () => {
   authRouter.post('/logout', logoutHandler);
 
   // Endpoint to test authentication
-  authRouter.post('/test', authHandler, (req, res, next): void => {
+  authRouter.post('/test', authHandler, (req, res, _next): void => {
     res.status(200).send();
   });
 
