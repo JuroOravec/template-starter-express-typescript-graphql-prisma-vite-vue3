@@ -1,0 +1,13 @@
+////////////////////////////////////
+// BASE SCHEMA
+////////////////////////////////////
+
+// See https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference
+datasource db {
+  provider = "postgres"
+  url      = env("SERVER_DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}

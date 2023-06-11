@@ -1,0 +1,37 @@
+////////////////////////////////////
+// USER SCHEMA
+////////////////////////////////////
+
+model User {
+  userId   String  @id
+  email    String  @unique
+  name     String?
+  password String
+
+  userSettings UserSettings?
+  userRoles    UserRole[]
+}
+
+model UserRole {
+  userRoleId String       @id
+  userId     String
+  role       UserRoleType
+
+  user User @relation(fields: [userId], references: [userId])
+
+  @@unique([userId, role])
+}
+
+model UserSettings {
+  userSettingsId String @id
+  userId         String @unique
+  testVal        Int
+
+  user User @relation(fields: [userId], references: [userId])
+
+  @@unique([userSettingsId, userId])
+}
+
+enum UserRoleType {
+  ADMIN
+}

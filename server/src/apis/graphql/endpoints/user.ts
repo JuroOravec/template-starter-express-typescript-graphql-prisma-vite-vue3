@@ -5,7 +5,7 @@ import {
   getUserSettings,
   getUserRoles,
   updateUserSettings,
-  ServerDbUserSettingsUpdateInput,
+  UserSettingsUpdateInput,
 } from '@/datasources/prisma/endpoints/user';
 import type {
   GqlUser,
@@ -104,7 +104,7 @@ const gql2prismaUserSettingsUpdateInput = ({
 }: {
   userId: string;
   userSettings: GqlUserSettingsUpdateInput;
-}): ServerDbUserSettingsUpdateInput => ({
+}): UserSettingsUpdateInput => ({
   userId,
   testVal: userSettings.testVal ?? undefined,
 });

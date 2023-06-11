@@ -1,0 +1,66 @@
+////////////////////////////////////
+// PAYGATE SCHEMA
+////////////////////////////////////
+
+model Product {
+  productId    String          @id
+  /// Payment gate provider
+  provider     ProductProvider
+  name         String
+  description  String?
+  priceInCents Int
+  currency     String
+  iconUrl      String?
+}
+
+/// Info about a purchased product transaction.
+///
+/// A ProductPurchase belongs to a single order,
+/// but single order may contain multiple ProductPurchases.
+///
+/// NOTE: This is a generic model used for the purchase of all products.
+model ProductPurchaseTransaction {
+  purchaseTransactionId String          @id
+  /// Payment gate provider
+  provider              ProductProvider
+  /// Purchased product
+  productId             String
+  /// Order that this purchase was part of
+  orderId               String
+  /// Applied discount
+  couponId              String?
+
+  /// Price per single unit
+  productPriceInCents    Int
+  /// Number of identical products purchased
+  productQuantity        Int
+  /// 3-letter code for currency used
+  productCurrency        String
+  /// 2-letter code for country where the purchase happened
+  productCountry         String
+  /// Total price of N units of this product
+  saleGrossInCents       Int
+  /// Tax incurred on this sale
+  saleTaxInCents         Int
+  /// Cut taken by the payment gate provider (e.g. Paddle or Stripe)
+  saleProviderFeeInCents Int
+  /// Our earnings from sales after tax and provider fee
+  saleNetInCents         Int
+  /// How much customer saved using the coupon
+  couponSavingsInCents   Int?
+
+  customerName             String?
+  customerEmail            String?
+  customerMarketingConsent Boolean @default(false)
+
+  /// Time of the transaction
+  dateCreated DateTime @default(now())
+
+  /// Extra data specific to the provider
+  extra Json?
+}
+
+/// Providers of payment gates
+enum ProductProvider {
+  PADDLE
+}
