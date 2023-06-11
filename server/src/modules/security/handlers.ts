@@ -1,9 +1,9 @@
 import cors, { CorsOptions } from 'cors';
 import type { Handler } from 'express';
-import createError from 'http-errors';
+import createHttpError from 'http-errors';
 import helmet, { HelmetOptions } from 'helmet';
 
-import { config } from '@/modules/core/lib/config';
+import { config } from '@/globals/config';
 
 const corsOptions: CorsOptions = {
   // TODO: Configure this based on enableCors config value
@@ -27,7 +27,7 @@ export const csrfHandler: Handler = (req, _res, next): void => {
   if (req.get('X-CSRF-TOKEN')) {
     next();
   } else {
-    next(createError(403));
+    next(createHttpError(403));
   }
 };
 
