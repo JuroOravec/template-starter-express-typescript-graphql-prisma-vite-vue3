@@ -23,6 +23,7 @@ import { authHandler } from '../../auth/handlers';
 import { createServerRouter } from '../router';
 import { setupHealthcheck } from './healthcheck';
 import { config } from '@/modules/core/lib/config';
+import { catchHandlerError } from '../utils';
 
 export const createExpressServer = async ({
   redisClient,
@@ -67,17 +68,16 @@ export const createExpressServer = async ({
     // @ts-ignore Silence this error https://stackoverflow.com/questions/66858790
     apolloServer.start()
   ); // prettier-ignore
+
   app.use(
     '/graphql',
-    authHandler, // TODO: Disable for dev?
-    expressMiddleware(apolloServer, {
-      context: async ({ req, res }) => {
-        // TODO ?
-        return {
-          user: req,
-        };
-      },
-    }),
+    catchHandlerError(
+      expressMiddleware(apolloServer, {
+        context: async ({ req, res }) => {
+          return req.context;
+        },
+      }),
+    ),
   );
 
   app.use(

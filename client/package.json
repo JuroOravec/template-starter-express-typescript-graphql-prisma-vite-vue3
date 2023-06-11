@@ -1,5 +1,5 @@
 {
-  "name": "task-control-panel",
+  "name": "web-app-client",
   "version": "0.0.0",
   "scripts": {
     "serve": "vite preview",
