@@ -53,12 +53,12 @@ interface Config {
 }
 
 const envVars = {
-  mailRelayPassword: process.env.MAIL_RELAY_PASSWORD,
+  mailRelayPassword: process.env.MAIL_RELAY_PASSWORD ?? '',
   appEnv: process.env.APP_ENV,
   paygatePaddleVendorId: process.env.PAYGATE_PADDLE_VENDOR_ID ?? null,
   paygatePaddleApiKey: process.env.PAYGATE_PADDLE_API_KEY ?? null,
   paygatePaddlePublicKey: process.env.PAYGATE_PADDLE_PUBLIC_KEY ?? null,
-  sessionCookieSecret: process.env.SERVER_SESSION_COOKIE_SECRET ?? null,
+  sessionCookieSecret: process.env.SERVER_SESSION_COOKIE_SECRET ?? '',
   sentryDns: process.env.SENTRY_DNS ?? null,
 };
 
@@ -78,14 +78,14 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     enableCsrf: false,
     enableCsp: false,
     enableCors: false,
-    sessionCookieSecret: envVars.sessionCookieSecret!,
+    sessionCookieSecret: envVars.sessionCookieSecret,
     mailServerSystemEmail: 'admin@system-mail.example.com',
     mailServerPublicEmail: 'name@example.com',
     mailForwardEmail: 'name@gmail.com', // Not obscured as it's defined in other places too
     mailRelayHost: 'smtp.sendgrid.net',
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
-    mailRelayPassword: envVars.mailRelayPassword!,
+    mailRelayPassword: envVars.mailRelayPassword,
     paygatePaddleApiUrl: 'https://sandbox-vendors.paddle.com/api/2.0',
     paygatePaddleVendorId: envVars.paygatePaddleVendorId,
     paygatePaddleApiKey: envVars.paygatePaddleApiKey,
@@ -102,14 +102,14 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     enableCsrf: false,
     enableCsp: false,
     enableCors: false,
-    sessionCookieSecret: envVars.sessionCookieSecret!,
+    sessionCookieSecret: envVars.sessionCookieSecret,
     mailServerSystemEmail: 'admin@system-mail.example.com',
     mailServerPublicEmail: 'name@example.com',
     mailForwardEmail: 'name@gmail.com', // Not obscured as it's defined in other places too
     mailRelayHost: 'smtp.sendgrid.net',
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
-    mailRelayPassword: envVars.mailRelayPassword!,
+    mailRelayPassword: envVars.mailRelayPassword,
     paygatePaddleApiUrl: 'https://sandbox-vendors.paddle.com/api/2.0',
     paygatePaddleVendorId: envVars.paygatePaddleVendorId,
     paygatePaddleApiKey: envVars.paygatePaddleApiKey,
@@ -126,14 +126,14 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     enableCsrf: true,
     enableCsp: true,
     enableCors: true,
-    sessionCookieSecret: envVars.sessionCookieSecret!,
+    sessionCookieSecret: envVars.sessionCookieSecret,
     mailServerSystemEmail: 'admin@system-mail.example.com',
     mailServerPublicEmail: 'juro@example.com',
     mailForwardEmail: 'name@gmail.com', // Not obscured as it's defined in other places too
     mailRelayHost: 'smtp.sendgrid.net',
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
-    mailRelayPassword: envVars.mailRelayPassword!,
+    mailRelayPassword: envVars.mailRelayPassword,
     paygatePaddleApiUrl: 'https://vendors.paddle.com/api/2.0',
     paygatePaddleVendorId: envVars.paygatePaddleVendorId,
     paygatePaddlePublicKey: envVars.paygatePaddlePublicKey,

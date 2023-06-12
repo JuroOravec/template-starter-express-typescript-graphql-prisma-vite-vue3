@@ -1,6 +1,6 @@
 import { createTerminus } from '@godaddy/terminus';
 
-import { logger } from '../../core/lib/logger';
+import { logger } from '@/globals/logger';
 
 /** Given Express app, configure healthcheck endpoint using terminus */
 export const setupHealthcheck = <T>(app: T): void => {

@@ -1,7 +1,7 @@
 import type { Request } from 'express';
 import { PrismaClient } from '@prisma/client';
 import type { MailerClient } from '@/modules/mail/lib/mailer';
-import type { Mfa } from '@/modules/mfa/mfa';
+import type { Mfa } from '@/modules/mfa/lib/mfa';
 
 /** Context available to all request handlers */
 export interface AppContext {

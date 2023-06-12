@@ -1,40 +1,47 @@
 import bodyParser from 'body-parser';
-import express, { Express } from 'express';
+import express from 'express';
 import { expressMiddleware } from '@apollo/server/express4';
 import compression from 'compression';
 import passport from 'passport';
-import type { RedisClientType } from 'redis';
 import * as Sentry from '@sentry/node';
 
-import {
-  corsHandler,
-  csrfHandler,
-  helmetHandler,
-} from '../../security/handlers';
+import { corsHandler, csrfHandler, helmetHandler } from '../../security/handlers';
 import { createSessionHandler } from '../../session/handlers';
-import {
-  errorHandler,
-  notFoundHandler,
-  createValidateRequestHandler,
-} from '../handlers';
+import { errorHandler, notFoundHandler, createValidateRequestHandler } from '../handlers';
 import { apolloServer } from '@/apis/graphql/apolloServer';
 import { createAuthRouter } from '../../auth/router';
 import { authHandler } from '../../auth/handlers';
 import { createServerRouter } from '../router';
 import { setupHealthcheck } from './healthcheck';
-import { config } from '@/modules/core/lib/config';
+import { config } from '@/globals/config';
+import { createPaygateRouter } from '@/modules/paygate/router';
+import { createAppContextHandler } from '../handlers';
+import type { MailerClient } from '@/modules/mail/lib/mailer';
+import { PrismaClient } from '@prisma/client';
+import type { AnyRedisClient } from '@/datasources/redis/types';
+import { createMfaRouter } from '@/modules/mfa/router';
+import { mfaPathScope } from '@/modules/mfa/constants';
+import { createMfa } from '@/modules/mfa/lib/mfa';
+import { paygateWatcherJobs } from '@/modules/paygate/watchers';
+import { createPaddleClient } from '@/datasources/paddle/client';
+import { setupWatchersJobs } from '@/utils/watchers';
 import { catchHandlerError } from '../utils';
 
 export const createExpressServer = async ({
   redisClient,
+  mailer,
 }: {
-  redisClient: RedisClientType<any, any, any>;
-}): Promise<Express> => {
+  redisClient: AnyRedisClient;
+  mailer: MailerClient;
+}) => {
   if (config.sentryDns) {
     Sentry.init({ dsn: config.sentryDns });
   }
 
   const app = express();
+  const prisma = new PrismaClient();
+  const paddle = createPaddleClient();
+  const mfa = createMfa({ redisClient, transporter: mailer.transporter });
 
   // Get real ip from nginx proxy
   app.set('trust proxy', true);
@@ -47,6 +54,7 @@ export const createExpressServer = async ({
     compression(),
     helmetHandler,
     createSessionHandler(redisClient),
+    createAppContextHandler({ prisma, mailer, mfa }), // TODO - will the "user" field be populated if it's before passport?
     // app.use(createValidateRequestHandler()); // TODO: Enable this?
     // csrfHandler, // TODO - enable for client-facing API - see https://owasp.org/www-community/attacks/csrf
     passport.initialize(),
@@ -61,6 +69,8 @@ export const createExpressServer = async ({
   // Routes
   app.get('/hello', createServerRouter());
   app.use('/auth', createAuthRouter());
+  app.use('/paygate', createPaygateRouter());
+  app.use(mfaPathScope, createMfaRouter({ mfa }));
   setupHealthcheck(app);
 
   // Set up Apollo server
@@ -87,5 +97,22 @@ export const createExpressServer = async ({
     errorHandler,
   );
 
-  return app;
+  const disposeWatcher = setupWatchersJobs({
+    jobs: [...paygateWatcherJobs],
+    args: { prisma, paddle },
+    /** By default check every 15 min for updates in products */
+    intervalMs: 15 * 60 * 1000,
+  });
+
+  const dispose = async () => {
+    disposeWatcher();
+    await apolloServer.stop();
+    await prisma.$disconnect();
+    await Sentry.close();
+  };
+
+  return {
+    app,
+    dispose,
+  };
 };
