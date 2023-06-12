@@ -5,8 +5,10 @@ This template should help get you started developing with:
 - Express
 - TypeScript
 - Apollo GraphQL
-- Prisma (with Postgres)
+- Prisma (with PostgreSQL)
 - Redis (for session storage)
+- Multi-factor authentication flow
+- Emails with nodemailer
 
 ## Getting started
 
@@ -42,13 +44,20 @@ run node server locally against services running locally.
 
 ```sh
 # In new terminal window
-npm run watch:local
+npm run dev
 ```
 
 You should see a message like this in terminal:
 
 ```json
-{"level":30,"time":1683975812255,"pid":6333,"hostname":"Juros-MacBook-Pro.local","name":"server","msg":"Server running at http://localhost:3000"}
+{
+  "level": 30,
+  "time": 1683975812255,
+  "pid": 6333,
+  "hostname": "Juros-MacBook-Pro.local",
+  "name": "server",
+  "msg": "Server running at http://localhost:3000"
+}
 ```
 
 3.3 Further validate that the server is working by navigating to these URLs. Both should work:
@@ -82,6 +91,18 @@ Lastly stop the docker:
 npm run docker:stop
 ```
 
+## Project structure
+
+```txt
+-- src
+    -- apis - How we communicate with downstream components - APIs we provide
+    -- datasources - Servers upstream of us (further from the users), e.g. databases
+    -- globals - opinionated, globally available code like config and loggers
+    -- libs - project-agnostic libraries that could be packages on its own
+    -- modules - everything that sits between datasources (upstream) and apis (downstream)
+    -- utils - opinionated small utility functions that are globally available (NOTE: Use this VERY, VERY seldom!)
+```
+
 ## Troubleshooting
 
 #### docker.sock: connect: permission denied
@@ -91,4 +112,3 @@ permission denied while trying to connect to the Docker daemon socket at unix://
 ```
 
 If you get this on your computer, try restarting the Docker client (e.g. on Mac that's Docker Desktop), or restart the computer.
-
