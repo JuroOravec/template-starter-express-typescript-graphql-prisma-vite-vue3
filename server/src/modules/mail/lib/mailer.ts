@@ -1,8 +1,32 @@
 import nodemailer from 'nodemailer';
+import type { Transporter } from 'nodemailer';
 import type { ParsedMail } from 'mailparser';
 
-import { config } from '@/modules/core/lib/config';
-import { logger } from '@/modules/core/lib/logger';
+import { config } from '@/globals/config';
+import { logger } from '@/globals/logger';
+
+export type MailerClient = {
+  transporter: Transporter;
+  forwardMail: (parsedMail: ParsedMail) => Promise<any>;
+};
+
+const getRecipients = (parsedMail: ParsedMail) => {
+  let recipients = parsedMail.to
+    ? !Array.isArray(parsedMail.to)
+      ? [parsedMail.to]
+      : parsedMail.to
+    : [];
+
+  if (!recipients.length) {
+    recipients = parsedMail.cc
+      ? !Array.isArray(parsedMail.cc)
+        ? [parsedMail.cc]
+        : parsedMail.cc
+      : [];
+  }
+
+  return recipients;
+};
 
 // Troubleshooting:
 // - Missing credentials for "PLAIN" - https://stackoverflow.com/questions/51973751
@@ -15,7 +39,6 @@ export const createMailer = () => {
       user: config.mailRelayUser,
       pass: config.mailRelayPassword,
     },
-    // dkim?
   });
 
   // Verify connection configuration
@@ -28,32 +51,20 @@ export const createMailer = () => {
   const forwardMail = (parsedMail: ParsedMail) => {
     const adminEmail = {
       name: 'Admin',
-      address: config.mailServerEmail,
+      address: config.mailServerSystemEmail,
     };
 
-    let recipients = parsedMail.to
-      ? !Array.isArray(parsedMail.to)
-        ? [parsedMail.to]
-        : parsedMail.to
-      : [];
-    if (!recipients.length) {
-      recipients = parsedMail.cc
-        ? !Array.isArray(parsedMail.cc)
-          ? [parsedMail.cc]
-          : parsedMail.cc
-        : [];
-    }
+    const recipients = getRecipients(parsedMail);
+    const subject = `Email forwarded from ${JSON.stringify(recipients.map(r => r.value[0].address))} (sent from ${JSON.stringify(parsedMail.from?.value[0].address)})`; // prettier-ignore
 
     return transporter.sendMail({
       from: adminEmail,
       replyTo: adminEmail,
       to: [config.mailForwardEmail],
-      subject: `Email forwarded from ${JSON.stringify(recipients.map(r => r.value[0].address))} (sent from ${JSON.stringify(parsedMail.from?.value[0].address)})`, // prettier-ignore
+      subject,
       text: JSON.stringify(parsedMail, null, 2),
       disableUrlAccess: true,
       disableFileAccess: true,
-      // subject: 'Hello ✔', // Subject line
-      // text: 'Hello world?', // plain text body
       // html: '<b>Hello world?</b>', // html body
       // watchHtml: '<b>Hello world?</b>' // Apple Watch specific HTML
       // amp: '<b>Hello world?</b>' // AMP4EMAIL specific HTML
@@ -62,5 +73,5 @@ export const createMailer = () => {
     });
   };
 
-  return { mailer: transporter, forwardMail };
+  return { transporter, forwardMail } satisfies MailerClient;
 };
