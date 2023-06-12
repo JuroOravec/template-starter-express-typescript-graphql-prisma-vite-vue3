@@ -4,7 +4,7 @@
 
 - Displaying products
 
-  1. A recurring job (watcher) fetches all our Paddle products and saves them to our database (every 15 min)
+  1. A recurring job fetches all our Paddle products and saves them to our database (every 15 min)
   2. Paddle products are exposed via GraphQL API
   3. Products are fetched on the frontend and displayed to user
   4. When user selects a product on the frontend, we use the product's ID

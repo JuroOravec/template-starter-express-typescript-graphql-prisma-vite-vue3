@@ -1,17 +1,17 @@
 import { PrismaClient, ProductProvider, ProductType } from '@prisma/client';
 
 import type { HttpClient } from '@/lib/httpClient';
-import type { WatcherJob } from '@/utils/watchers';
+import type { Job } from '@/utils/jobs';
 import { getProducts } from '@/datasources/paddle/endpoints/product';
 import { upsertMany } from '@/datasources/prisma/utils';
 
-interface WatcherContext {
+interface JobContext {
   prisma: PrismaClient;
   paddle: HttpClient;
 }
 
 // Update local copy of our Paddle products at regular interval
-const updatePaddleProducts: WatcherJob<WatcherContext> = async (args, _done) => {
+const updatePaddleProducts: Job<JobContext> = async (args, _done) => {
   const { prisma, paddle } = args;
 
   const products = await getProducts(paddle);
@@ -34,4 +34,4 @@ const updatePaddleProducts: WatcherJob<WatcherContext> = async (args, _done) => 
   });
 };
 
-export const paygateWatcherJobs = [updatePaddleProducts];
+export const paygateJobs = [updatePaddleProducts];

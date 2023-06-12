@@ -22,9 +22,9 @@ import type { AnyRedisClient } from '@/datasources/redis/types';
 import { createMfaRouter } from '@/modules/mfa/router';
 import { mfaPathScope } from '@/modules/mfa/constants';
 import { createMfa } from '@/modules/mfa/lib/mfa';
-import { paygateWatcherJobs } from '@/modules/paygate/watchers';
+import { paygateJobs } from '@/modules/paygate/jobs';
 import { createPaddleClient } from '@/datasources/paddle/client';
-import { setupWatchersJobs } from '@/utils/watchers';
+import { setupJobs } from '@/utils/jobs';
 import { catchHandlerError } from '../utils';
 
 export const createExpressServer = async ({
@@ -97,15 +97,15 @@ export const createExpressServer = async ({
     errorHandler,
   );
 
-  const disposeWatcher = setupWatchersJobs({
-    jobs: [...paygateWatcherJobs],
+  const disposeJobs = setupJobs({
+    jobs: [...paygateJobs],
     args: { prisma, paddle },
     /** By default check every 15 min for updates in products */
     intervalMs: 15 * 60 * 1000,
   });
 
   const dispose = async () => {
-    disposeWatcher();
+    disposeJobs();
     await apolloServer.stop();
     await prisma.$disconnect();
     await Sentry.close();
