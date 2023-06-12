@@ -1,6 +1,6 @@
 import { RedisClientOptions, createClient } from 'redis';
 
-import { logger } from '@/modules/core/lib/logger';
+import { logger } from '@/globals/logger';
 
 export const createRedisClient = (clientOptions?: RedisClientOptions) => {
   const redisClient = createClient(clientOptions);
