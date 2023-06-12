@@ -9,7 +9,7 @@ import { exampleProductWebhookHandler } from './handlers/exampleProduct';
 
 /** All Paddle order fulfillment webhook handlers defined in one place */
 const productWebhookHandlers = {
-  SCRAPER_VOTE: exampleProductWebhookHandler,
+  EXAMPLE_PRODUCT: exampleProductWebhookHandler,
 } satisfies Record<PaddleProduct, ProductWebhookHandler>;
 
 /** All Paddle webhook handlers defined in one place */
@@ -37,6 +37,6 @@ const eventHandlers = {
 } satisfies Record<PaddleEvent, PaddleEventHandler<any>>;
 
 export const paddleWebhookHandler = createPaddleWebhookHandler({
-  publicKey: config.paygatePaddlePublicKey!,
+  publicKey: config.paygatePaddlePublicKey ?? '',
   eventHandlers,
 });

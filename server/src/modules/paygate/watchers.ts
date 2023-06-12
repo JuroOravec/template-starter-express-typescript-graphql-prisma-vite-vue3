@@ -1,4 +1,4 @@
-import { PrismaClient, ProductProvider } from '@prisma/client';
+import { PrismaClient, ProductProvider, ProductType } from '@prisma/client';
 
 import type { HttpClient } from '@/lib/httpClient';
 import type { WatcherJob } from '@/utils/watchers';
@@ -23,6 +23,7 @@ const updatePaddleProducts: WatcherJob<WatcherContext> = async (args, _done) => 
     },
     data: products.map((p) => ({
       productId: `${p.id}`,
+      type: ProductType.EXAMPLE_PRODUCT,
       provider: ProductProvider.PADDLE,
       name: p.name,
       description: p.description,

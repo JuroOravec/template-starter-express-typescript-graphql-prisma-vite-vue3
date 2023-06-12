@@ -5,6 +5,7 @@
 ### UPDATE 2023-05-16: Issues with Amazon SES, Docker Mailserver and SendGrid.
 
 I had two needs:
+
 - Send out emails when form is completed
 - (Optional) receive emails
 
@@ -25,19 +26,21 @@ that option). However, then there was the problem of how to forward incoming
 emails. Docker Mailserver provides option to rewrite the header / envelope,
 and to set email "alias"es, that actually point to external email addresses.
 This in combination could be used to:
+
 1. On received email redirect it to external email based on which (our) email
-address it was sent.
+   address it was sent.
 2. The info on original sender would be still persisted.
 3. SendGrid was used as relay so that we could send this email to my gmail account.
 
 Unfortunately, SendGrid requires you to declare which email addresses will be using
 the relay. And it cannot be set on a domain level, but on email level. And
 Docker Mailserver was rewriting the emails as coming from e.g.
-`com.gmail=dwaper@example.com` (when it came from `dwaper@gmail.com`).
+`com.gmail=name@example.com` (when it came from `name@gmail.com`).
 And because this wasn't among the SendGrid's recognized email addresses,
 SendGrid refused the email too.
 
 To conclude all this, I made an issue here
+
 - https://github.com/docker-mailserver/docker-mailserver/issues/3350
 
 ### UPDATE 2023-05-17: Handling mail via NodeJS.
@@ -45,14 +48,17 @@ To conclude all this, I made an issue here
 Following the issues above, I came across [smtp2http](https://github.com/alash3al/smtp2http/), which promised to convert incoming SMTP connections (emails) into webhooks.
 
 NOTE: Other similar solutions:
+
 - https://github.com/mailhog/MailHog
 - https://www.reddit.com/r/selfhosted/comments/xstbzd/receiving_only_mail_server_for_forwarding_as/
 
 In theory, this should have worked, because
+
 1. Docker Mailerserver supported email forwarding,
 2. Since the email would be forwarded only within the docker container network, the issues with trusted mail server relays shouldn't apply.
 
 I tried:
+
 - Redirecting to test@localhost:25 - didn't work because email domain/IP must not include port
 - Redirecting to test@localhost and test@\[127.0.0.1\] ([see thread](https://serverfault.com/questions/905886/is-it-possible-to-send-and-receive-an-email-from-an-ip-address-instead-from-a-do)) - didn't work because it's containerised, so "localhost" was actually Docker Mailserver's localhost.
 - Redirecting to test@smtp2http - This did work, but smtp2http was misconfigured and was responding with error.
@@ -75,8 +81,9 @@ We use [Node STMP server](https://simonjcarr.medium.com/create-an-smtp-server-wi
 > Furthermore, before concluding to the options described above, we considered several options:
 >
 > 1. Run own mailserver instance
+>
 >    - This added the complexity of needing to either deploy multiple compute instance (like EC2) or deploy the app using docker-compose.
->    - docker-compose was initially an obstacle, but now the project uses it, so 
+>    - docker-compose was initially an obstacle, but now the project uses it, so
 >      using own mailserver instance was interesting.
 >    - Unfortunately, then we hit issue that in the mailing world, we need a [mail relay server](https://www.mailjet.com/blog/email-best-practices/what-is-an-smtp-relay/), so we still needed to use a SaaS solution (e.g. SendGrid) to get the emails
 >      delivered if we decided to send them.
@@ -89,12 +96,18 @@ We use [Node STMP server](https://simonjcarr.medium.com/create-an-smtp-server-wi
 > To be frank, I didn't explore SaaS options of like SendGrid and similar as much as I maybe should have.
 
 Other useful apps from nodemailer:
+
 - https://nodemailer.com/app/
 - https://emailengine.app/
 
 Other (unexplored) options:
+
 - https://haraka.github.io/getting_started (Looks solid)
 - https://www.wpdiaries.com/mail-forwarder/
+
+Other related:
+
+- To send and receive emails from custom domain, consider [Gmail suite](https://support.google.com/business/answer/9270657?hl=en).
 
 ## Setup
 
@@ -103,6 +116,7 @@ Other (unexplored) options:
 #### 1. Set up Nodemailer and SMTP server
 
 Follow these guides:
+
 - <https://nodemailer.com/usage/>
 - <https://simonjcarr.medium.com/create-an-smtp-server-with-nodejs-5688d8fd882e>
 - <https://www.twilio.com/blog/send-smtp-emails-node-js-sendgrid>
@@ -125,6 +139,7 @@ Finally, you can check how many email have already been sent on [SendGrid dashbo
 See the DMS guide <https://docker-mailserver.github.io/docker-mailserver/latest/usage/>
 
 Also this is a very good practical tutorial that _almost_ got me there
+
 - https://www.libe.net/en-docker-mailserver#mail-server-commissioning
 
 Requirements
@@ -133,6 +148,7 @@ Requirements
 - Open ports for email communication on the server / docker
 
 Learn more:
+
 - https://docker-mailserver.github.io/docker-mailserver/latest/usage/#setting-up-tls
 - https://docker-mailserver.github.io/docker-mailserver/latest/config/security/understanding-the-ports/
 - https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/mail-forwarding/relay-hosts/
@@ -168,6 +184,7 @@ I wasn't following it at first while writing this.
 https://blog.tericcabrel.com/send-email-nodejs-handlebars-amazon-ses/
 
 Learn more:
+
 - https://moosend.com/blog/free-smtp-server
 - https://docs.aws.amazon.com/ses/latest/dg/send-email-smtp.html
 - https://docs.aws.amazon.com/general/latest/gr/ses.html

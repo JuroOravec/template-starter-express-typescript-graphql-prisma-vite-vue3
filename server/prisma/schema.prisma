@@ -1,11 +1,12 @@
+//******** AUTO GENERATED FILE, DO NOT EDIT.  *********
+
+////////////////////////////////////
+// BASE SCHEMA
+////////////////////////////////////
+
+// See https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference
 datasource db {
-  // NOTE: "sqlite" is selected only for the purpose of this template.
-  //   If you plan to work with PostgreSQL, then:
-  //     1. Change provider to "postgres"
-  //     2. Delete the current migrations
-  //     3. Start up a (local) postgreSQL database
-  //     4. run `prisma migrate dev` to create migrations against that database instance
-  provider = "sqlite"
+  provider = "postgres"
   url      = env("SERVER_DB_URL")
 }
 
@@ -13,19 +14,117 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Post {
-  id        String     @id
-  title     String
-  content   String?
-  published Boolean @default(false)
-  authorId  String?
-  author    User?   @relation(fields: [authorId], references: [id])
+
+////////////////////////////////////
+// PAYGATE SCHEMA
+////////////////////////////////////
+
+model Product {
+  productId    String          @id
+  /// Payment gate provider
+  provider     ProductProvider
+  type         ProductType
+  name         String
+  description  String?
+  priceInCents Int
+  currency     String
+  iconUrl      String?
 }
 
+/// Info about a purchased product transaction.
+///
+/// A ProductPurchase belongs to a single order,
+/// but single order may contain multiple ProductPurchases.
+///
+/// NOTE: This is a generic model used for the purchase of all products.
+model ProductPurchaseTransaction {
+  purchaseTransactionId String          @id
+  /// Payment gate provider
+  provider              ProductProvider
+  /// The type of product purchased
+  type                  ProductType
+  /// Purchased product
+  productId             String
+  /// Order that this purchase was part of
+  orderId               String
+  /// Applied discount
+  couponId              String?
+
+  /// Price per single unit
+  productPriceInCents    Int
+  /// Number of identical products purchased
+  productQuantity        Int
+  /// 3-letter code for currency used
+  productCurrency        String
+  /// 2-letter code for country where the purchase happened
+  productCountry         String
+  /// Total price of N units of this product
+  saleGrossInCents       Int
+  /// Tax incurred on this sale
+  saleTaxInCents         Int
+  /// Cut taken by the payment gate provider (e.g. Paddle or Stripe)
+  saleProviderFeeInCents Int
+  /// Our earnings from sales after tax and provider fee
+  saleNetInCents         Int
+  /// How much customer saved using the coupon
+  couponSavingsInCents   Int?
+
+  customerName             String?
+  customerEmail            String?
+  customerMarketingConsent Boolean @default(false)
+
+  /// Time of the transaction
+  dateCreated DateTime @default(now())
+
+  /// Extra data specific to the provider
+  extra Json?
+}
+
+/// Providers of payment gates
+enum ProductProvider {
+  PADDLE
+}
+
+/// Type of products that can be purchased that implies additional actions
+enum ProductType {
+  EXAMPLE_PRODUCT
+}
+
+
+////////////////////////////////////
+// USER SCHEMA
+////////////////////////////////////
+
 model User {
-  id       String     @id
+  userId   String  @id
   email    String  @unique
   name     String?
   password String
-  posts    Post[]
+
+  userSettings UserSettings?
+  userRoles    UserRole[]
+}
+
+model UserRole {
+  userRoleId String       @id
+  userId     String
+  role       UserRoleType
+
+  user User @relation(fields: [userId], references: [userId])
+
+  @@unique([userId, role])
+}
+
+model UserSettings {
+  userSettingsId String @id
+  userId         String @unique
+  testVal        Int
+
+  user User @relation(fields: [userId], references: [userId])
+
+  @@unique([userSettingsId, userId])
+}
+
+enum UserRoleType {
+  ADMIN
 }

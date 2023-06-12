@@ -6,6 +6,7 @@ model Product {
   productId    String          @id
   /// Payment gate provider
   provider     ProductProvider
+  type         ProductType
   name         String
   description  String?
   priceInCents Int
@@ -23,6 +24,8 @@ model ProductPurchaseTransaction {
   purchaseTransactionId String          @id
   /// Payment gate provider
   provider              ProductProvider
+  /// The type of product purchased
+  type                  ProductType
   /// Purchased product
   productId             String
   /// Order that this purchase was part of
@@ -63,4 +66,9 @@ model ProductPurchaseTransaction {
 /// Providers of payment gates
 enum ProductProvider {
   PADDLE
+}
+
+/// Type of products that can be purchased that implies additional actions
+enum ProductType {
+  EXAMPLE_PRODUCT
 }

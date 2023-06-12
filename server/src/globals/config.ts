@@ -159,7 +159,7 @@ const configValidationSchema = Joi.object<Config>({
   mailRelayHost: Joi.string().min(1),
   mailRelayPort: Joi.number().min(1).required(),
   mailRelayUser: Joi.string().min(1),
-  mailRelayPassword: Joi.string().min(1),
+  mailRelayPassword: Joi.string().allow(''),
   paygatePaddleApiUrl: Joi.string()
     .min(1)
     .uri({ scheme: ['http', 'https'] })

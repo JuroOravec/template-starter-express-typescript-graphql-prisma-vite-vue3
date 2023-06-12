@@ -156,13 +156,17 @@ NOTE: In `./server/package.json`, there's 2 commands to run `@graphql-codegen`:
 - `graphql:gen:offline`
 - `graphql:gen`
 
-The first command can run without the server running - it uses just the static files to generate the schema. The second command, however, requires the server to be up and running.
-We use the second command, because our GraphQL schema contains also dynamically-defined entities, which are not captured using the static file analysis.
+The first command can run without the server running - it uses just the static files to generate the schema. The second command requires the server to be up and running.
 
-Hence, the flow to generate GraphQL files on the server, we:
+We use the second command, because our GraphQL schema contains also dynamically-defined entities, which are not captured using the static file analysis. However, this creates a chicken-and-egg problem, where 1. we need to run server to generate types,
+but 2. server cannot be started, because the generated types are missing, and typescript
+compilation will throw errors.
 
-1. (optionally) Start docker-compose services required by the Node server
-2. Start the Node server, which will build the GraphQL schema
+Hence, if you're generating the type for the first time, first run `graphql:gen:offline`.
+Then, to generate final GraphQL files on the server, we:
+
+1. (optionally) Start docker-compose services required by the Node server.
+2. Start the Node server with `npm run dev`, which will build the GraphQL schema.
 3. Run `@graphql-codegen` (`npm run graphql:gen`) against the running server, generating the all types.
 
 ### Client-side - Tooling (typing)
