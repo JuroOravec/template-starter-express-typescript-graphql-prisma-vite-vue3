@@ -165,7 +165,8 @@ elif [ "$job" == "server-deploy-stg" ]; then
   echo -e "\nAWS_S3_BACKUP_DB_PWD=$AWS_S3_BACKUP_DB_PWD_STAGE" >> .env
   echo -e "\nSERVER_DB_PWD=$SERVER_DB_PWD_STAGE" >> .env
   echo -e "\nSERVER_SESSION_COOKIE_SECRET=$SERVER_SESSION_COOKIE_SECRET" >> .env
-  echo -e "\nPAYGATE_PADDLE_VENDOR_ID=$PAYGATE_PADDLE_VENDOR_ID" >> .env
+  echo -e "\nPAYGATE_PADDLE_VENDOR_ID=$PAYGATE_PADDLE_VENDOR_ID_STAGE" >> .env
+  echo -e "\nPAYGATE_PADDLE_API_KEY=$PAYGATE_PADDLE_API_KEY_STAGE" >> .env
   envFileGenServerDbUrl
 
   # Following data includes newlines, so we pass them as files
@@ -186,7 +187,8 @@ elif [ "$job" == "server-deploy-prod" ]; then
   echo -e "\nAWS_S3_BACKUP_DB_PWD=$AWS_S3_BACKUP_DB_PWD_PROD" >> .env
   echo -e "\nSERVER_DB_PWD=$SERVER_DB_PWD_PROD" >> .env
   echo -e "\nSERVER_SESSION_COOKIE_SECRET=$SERVER_SESSION_COOKIE_SECRET" >> .env
-  echo -e "\nPAYGATE_PADDLE_VENDOR_ID=$PAYGATE_PADDLE_VENDOR_ID" >> .env
+  echo -e "\nPAYGATE_PADDLE_VENDOR_ID=$PAYGATE_PADDLE_VENDOR_ID_PROD" >> .env
+  echo -e "\nPAYGATE_PADDLE_API_KEY=$PAYGATE_PADDLE_API_KEY_PROD" >> .env
   envFileGenServerDbUrl
 
   # Following data includes newlines, so we pass them as files
