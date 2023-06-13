@@ -1,0 +1,13 @@
+export type ArrVal<T extends any[] | readonly any[]> = T[number];
+
+export const enumFromArray = <T extends readonly any[]>(arr: T) => {
+  return arr.reduce((agg, key) => {
+    agg[key] = key;
+    return agg;
+  }, {}) as { [Key in ArrVal<T>]: Key };
+};
+
+export type MaybePromise<T> = T | Promise<T>;
+
+export type PartialFields<TObj, TKeys extends keyof TObj> = Omit<TObj, TKeys> &
+  Partial<Pick<TObj, TKeys>>;
