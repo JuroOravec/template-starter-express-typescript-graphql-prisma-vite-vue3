@@ -32,6 +32,7 @@ to keep ownership and maintainability in check.
   - Declarative and fully-typed forms
   - Separation of design system (component library) and "business logic" components
   - Usage analytics with Mixpanel with fully-typed events
+  - Error tracking with Sentry
 - Type safety
   - Fully typed, from users' input, through server-client communication (Apollo), to database connectors
 

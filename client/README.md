@@ -141,7 +141,12 @@ Vue template
 
 ```vue
 <!-- FormSimple is a form renderer - It takes a list of fields, and renders it accordingly -->
-<FormSimple v-bind="$attrs" :fields="formFields" :completed="formCompleted" @submit="onSubmit">
+<FormSimple
+  v-bind="$attrs"
+  :fields="formFields"
+  :completed="formCompleted"
+  @submit="onSubmit"
+>
     <template #form-completed>
       <div>Thanks for the submission.</div>
     </template>
@@ -153,7 +158,11 @@ Script
 ```ts
 import { required, email, minLength, maxLength } from '@vuelidate/validators';
 
-import { FormFieldToType, FormFieldList, createFormField } from '../../base-ui/composables/useForm';
+import {
+  FormFieldToType,
+  FormFieldList,
+  createFormField,
+} from '../../base-ui/composables/useForm';
 
 // This type is defined so that the 'name' property on `createFormField` is inferred.
 type FormFieldKey = 'firstName' | 'lastName' | 'email' | 'comments';
@@ -239,6 +248,19 @@ useAnalytics().trackEvent('eventName', { ... });
 ```
 
 All events are fully typed.
+
+### Error tracking
+
+This project uses Sentry for error tracking.
+
+Sentry is installed onto Vue, which should capture errors within Vue context.
+
+If you need to call Sentry manually, then - just like the analytics lib - also Sentry
+is available via `useNuxtApp`, as Vue global, and via `useErrorTracker`, so you can just use
+
+```ts
+useErrorTracker().captureException(Error('Error name'));
+```
 
 ### Jobs
 
