@@ -11,3 +11,5 @@ export type MaybePromise<T> = T | Promise<T>;
 
 export type PartialFields<TObj, TKeys extends keyof TObj> = Omit<TObj, TKeys> &
   Partial<Pick<TObj, TKeys>>;
+
+export type Flattened<T> = T extends Array<infer U> ? Flattened<U> : T;
