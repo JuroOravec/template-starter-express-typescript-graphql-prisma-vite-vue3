@@ -12,7 +12,7 @@ export type CustomAnalyticsInstance = AnalyticsInstance<AnalyticsEvents>;
 
 /** Our instance of analytics specific to this project */
 export const createAnalyticsInstance = (): CustomAnalyticsInstance => {
-  const mixpanelPlugin = createMixpanelPlugin(config.analyticsMixpanelToken!, {
+  const mixpanelPlugin = createMixpanelPlugin(config.analyticsMixpanelToken ?? '', {
     opt_out_tracking_cookie_prefix: 'yodese',
     api_host: config.analyticsUrl,
   });
