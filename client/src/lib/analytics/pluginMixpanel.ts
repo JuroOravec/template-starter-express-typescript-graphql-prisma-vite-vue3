@@ -14,20 +14,33 @@ const defaultMixpanelOptions = {
 /** Analytics plugin that sends the analytics data to Mixpanel */
 export const createMixpanelPlugin = <
   TEvents extends Record<string, unknown>,
-  TCtx extends AnalyticsCtx<TEvents>
+  TCtx extends AnalyticsCtx<TEvents>,
 >(
   mixpanelToken: string,
-  config?: Partial<MixpanelConfig>
+  config?: Partial<MixpanelConfig>,
 ) => {
+  const isDisabled = !mixpanelToken;
+
   return {
     name: 'mixpanel',
     init: () => {
-      return mixpanel.init(mixpanelToken, { ...defaultMixpanelOptions, ...config });
+      if (isDisabled) return;
+
+      return mixpanel.init(mixpanelToken, {
+        ...defaultMixpanelOptions,
+        ...config,
+      });
     },
     trackEvent: (eventName, eventProps) => {
-      return new Promise<any>((res) => mixpanel.track(eventName as string, eventProps as any, res));
+      if (isDisabled) return;
+
+      return new Promise<any>((res) =>
+        mixpanel.track(eventName as string, eventProps as any, res),
+      );
     },
     identify: (userId) => {
+      if (isDisabled) return;
+
       return mixpanel.identify(userId);
     },
   } satisfies AnalyticsPlugin<TEvents, TCtx>;
