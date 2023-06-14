@@ -10,6 +10,8 @@ Since it sits between server (backend) and browser client (frontend), we use som
 >
 > GraphQL is designed for network communication where the network speed / connectivity may be a bottleneck. This is also true for browser users, who may be outdoors, have weak or intermitten signal, and so we need to do the necessary operations with as little bandwidth as possible.
 >
+> - <https://stackoverflow.blog/2022/11/28/when-to-use-grpc-vs-graphql/>
+>
 > GraphQL helps us with that by:
 >
 > - Fetching ONLY the data (on field-level) that one actually needs.
@@ -117,6 +119,10 @@ type ScraperQuery {
 }
 ```
 
+To learn about how Prisma supports pagination, see:
+
+- https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination
+
 ### Server-side - Custom scalars
 
 Server defines the schema, and on the schema, it's possible to define custom "scalar" types.
@@ -138,20 +144,20 @@ This way we can use scalars like `NonNegativeInt`, to signify (and validate) tha
 
 Apollo server validates the data returned from resolvers based on the provided schema. Since we write the schema in `graphql` syntax, there's no typing system out of the box that'd tell us if the data we return makes sense or not. And even if there was, we still face the issue that our schema may be defined across many files.
 
-To work around this, we rely on the `@graphql-codegen` library. This library can:
+To work around this, we rely on the [@graphql-codegen](https://the-guild.dev/graphql/codegen/docs/getting-started) library. This library can:
 
 1. Extract partial schema definitions from `gql` tags, `.graphql` files, and more
 2. Generate TypeScript types based on the merged schema
 3. Generate helper utilities like functions.
 
-The working of `@graphql-codegen` is configured in `./server/codegen.ts` and we use it for:
+The working of [@graphql-codegen](https://the-guild.dev/graphql/codegen/docs/getting-started) is configured in `./server/codegen.ts` and we use it for:
 
 - Generating TypeScript types to provide typing for resolvers
 - Exporting merged schema into JSON, which can be passed to other tools
 
 The generated types are available globally from `./server/__generated__`.
 
-NOTE: In `./server/package.json`, there's 2 commands to run `@graphql-codegen`:
+NOTE: In `./server/package.json`, there's 2 commands to run [@graphql-codegen](https://the-guild.dev/graphql/codegen/docs/getting-started):
 
 - `graphql:gen:offline`
 - `graphql:gen`
@@ -167,13 +173,13 @@ Then, to generate final GraphQL files on the server, we:
 
 1. (optionally) Start docker-compose services required by the Node server.
 2. Start the Node server with `npm run dev`, which will build the GraphQL schema.
-3. Run `@graphql-codegen` (`npm run graphql:gen`) against the running server, generating the all types.
+3. Run [@graphql-codegen](https://the-guild.dev/graphql/codegen/docs/getting-started) (`npm run graphql:gen`) against the running server, generating the all types.
 
 ### Client-side - Tooling (typing)
 
 On the client, we also want to generate the TypeScript types matching the data we fetch from the server.
 
-On the client the job is a bit easier, because we assume that `@graphql-codegen` has already ran on the server-side and generated the JSON export of GraphQL schema `graphql.schema.json`.
+On the client the job is a bit easier, because we assume that [@graphql-codegen](https://the-guild.dev/graphql/codegen/docs/getting-started) has already ran on the server-side and generated the JSON export of GraphQL schema `graphql.schema.json`.
 And if that did happen, then we can just use the `graphql.schema.json` to create types and functions for the client-side.
 
 Similarly, this is configured in `./client/codegen.ts`.
@@ -181,6 +187,9 @@ Similarly, this is configured in `./client/codegen.ts`.
 Beside just types, on the client we also define composable funcions. These helper functions that automatically wrap the GraphQL documents and add proper typing. Hence, by using these helper functions, we've got the guarantee that our TypeScript code is interpolating the data types correctly.
 
 ### Client-side - Endpoints
+
+In the client, we use [Apollo Client](https://www.apollographql.com/docs/react/) to fetch GraphQL queries from the server.
+To work nicely with Vue, the client requests are wrapped in Vue reactivity using [VueApollo](https://v4.apollo.vuejs.org/guide/installation.html#manual-installation).
 
 Once you've read about the GraphQL + Apollo setup on the server-side, you will see that client-side is very similar, except we don't have to define the server, nor resolvers, nor directives.
 
@@ -210,7 +219,7 @@ And similarly, we use `graphql-tag` for defining the queries / mutations on the 
 
 On both server and client, we use the VSCode extension [apollographql.vscode-apollo](https://www.apollographql.com/docs/devtools/editor-plugins/) to provide linting / type hints / intellisense for the GraphQL syntax.
 
-The extension is configured in `./{server,client}/apollo.config.js`. For the extension to know how to validate our GraphQL syntax, we provide it the JSON of our GraphQL schema, as generated by `@graphql-codegen`.
+The extension is configured in `./{server,client}/apollo.config.js`. For the extension to know how to validate our GraphQL syntax, we provide it the JSON of our GraphQL schema, as generated by [@graphql-codegen](https://the-guild.dev/graphql/codegen/docs/getting-started).
 
 The Apollo server doesn't need to be running for `apollographql.vscode-apollo` to work.
 
@@ -234,3 +243,10 @@ Imagine you need to get some data from the database to the client. Here are the 
    3. Create composable for the new GraphQL statement
    4. Use the composable in application
    5. (If possible) write test
+
+## Further reading
+
+- https://graphql.org/learn/global-object-identification/
+- https://graphql.org/learn/pagination/
+- https://www.prisma.io/dataguide/datamodeling/know-your-problem-space
+- https://www.prisma.io/dataguide/datamodeling/correctness-constraints
