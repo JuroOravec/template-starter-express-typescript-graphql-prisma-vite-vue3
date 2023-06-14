@@ -1,0 +1,57 @@
+// See https://theultimatecoder.com/how-to-use-other-font-family-in-vuetify-3
+@use 'vuetify' with (
+  $body-font-family: Overpass /*put the font family name here*/
+);
+
+////////////////////////////////////
+// GLOBAL CSS CLASSES
+////////////////////////////////////
+
+.global-list {
+  padding: 0 30px;
+}
+.global-form-error {
+  color: rgb(var(--v-theme-error)) !important;
+}
+.global-form-caption {
+  padding-top: 4px;
+  color: #666;
+}
+.global-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+.md {
+  .global-sections {
+    gap: 60px;
+  }
+}
+
+////////////////////////////////////
+// VUETIFY OVERRIDES
+////////////////////////////////////
+
+// Make hover and focus background of fields lighter, so it's easier to read the text inside
+.v-field--variant-filled.v-field--focused {
+  .v-field__overlay {
+    opacity: 0.1 !important;
+  }
+}
+
+// When we have e.g. text area input, we want the counter to be shown BELOW the hints
+.v-input {
+  .v-input__details {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .v-counter {
+      align-self: flex-end;
+    }
+  }
+}
+
+// Make more space between checkbox and label
+.v-selection-control__wrapper {
+  margin-right: 8px;
+}
