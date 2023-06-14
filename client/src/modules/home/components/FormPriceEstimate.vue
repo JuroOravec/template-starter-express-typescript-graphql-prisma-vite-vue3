@@ -54,7 +54,7 @@ import {
   maxLength,
   helpers,
 } from '@vuelidate/validators';
-import { countries } from 'countries-list';
+import countries from 'countries-list';
 
 import type { GqlFormContactInfo, GqlPriceEstimateRequestInput } from '@/../__generated__/graphql';
 // import { useCreatePriceEstimate } from '@/../datasources/apollo/endpoints/form';
@@ -68,7 +68,7 @@ defineOptions({ inheritAttrs: false });
 
 type PriceEstimateFormFieldKey = keyof GqlPriceEstimateRequestInput | keyof GqlFormContactInfo;
 
-const countryOptions = Object.entries(countries).map(([code, c]) => ({
+const countryOptions = Object.entries(countries.countries).map(([code, c]) => ({
   value: code,
   title: c.name,
 }));
