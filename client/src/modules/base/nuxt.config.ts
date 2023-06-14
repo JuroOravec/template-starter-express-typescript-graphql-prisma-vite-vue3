@@ -2,7 +2,7 @@ import { apolloConfig, onApolloError } from '../../datasources/apollo';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  extends: ['../base-ui', '../base-analytics'],
+  extends: ['../base-ui', '../base-analytics', '../base-errorTracker'],
   // NOTE: Could this solve the slow startup issues?
   // See https://github.com/nuxt/nuxt/issues/20596
   // experimental: {
