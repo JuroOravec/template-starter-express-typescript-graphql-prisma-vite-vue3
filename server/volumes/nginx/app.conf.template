@@ -53,12 +53,27 @@ server {
     ## See https://serverfault.com/a/1042258/1021637
 
     ## Forward to error monitoring ingest
-    location = /_t/e {
-        proxy_pass  ${ERROR_TRACK_URL};
+    location /_t/e/ { # Note trailing slash, see https://serverfault.com/a/870620/1021637
+        proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $server_name;
+        ## Keep trailing slash, see https://serverfault.com/a/725433/1021637
+        proxy_pass  ${ERROR_TRACK_URL}/;
     }
 
-    # Forward to analytics ingest
-    location = /_t/a {
-        proxy_pass  ${ANALYTICS_URL};
+    # Forward to analytics ingest (generic)
+    location /_t/a/ { # Note trailing slash, see https://serverfault.com/a/870620/1021637
+        proxy_pass  ${ANALYTICS_URL}/;
+    }
+
+    # Forward to analytics ingest (Mixpanel)
+    location /_t/a/m/ { # Note trailing slash, see https://serverfault.com/a/870620/1021637
+        ## See https://github.com/mixpanel/tracking-proxy/blob/126203cda52abd1564b8d82ab5dd88f67e7c27a5/nginx.conf
+        proxy_set_header Host api-eu.mixpanel.com;
+        proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Host $server_name;
+        ## Keep trailing slash, see https://serverfault.com/a/870620/1021637
+        proxy_pass https://api-eu.mixpanel.com/;
     }
 }
