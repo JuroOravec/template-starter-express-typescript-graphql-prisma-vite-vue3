@@ -14,7 +14,7 @@ Reverse proxy routes incoming network requests to specific services. For example
 
 Adblockers prevent sending requests directly from the browser to the ingest URL of the telemetry service provider. To work around it, we use our server as a proxy.
 
-For example, the routes `/_t/e` and `/_t/a` redirect to error tracking ingest ([Sentry](https://sentry.io/)) and analytics ingest ([Mixpanel](https://mixpanel.com/)) respectively.
+For example, the routes `/_t/e` and `/_t/a/m` redirect to error tracking ingest ([Sentry](https://sentry.io/)) and analytics ingest ([Mixpanel](https://mixpanel.com/)) respectively.
 
 ## Dynamic Nginx configuration
 
