@@ -7,7 +7,7 @@ export interface CompoItem<
   TProps extends object = object,
   TData = any,
   TState extends object = object,
-  TRendererProps extends object = object
+  TRendererProps extends object = object,
 > {
   /** Component that will be displayed when this queue item is enqueued */
   component: Component;
@@ -23,10 +23,14 @@ export interface CompoItem<
   callback: (data: TData) => MaybePromise<void>;
 }
 
-export type CompoStack = CompoItem[];
-export type CompoQueue = CompoStack[];
+export type CompoStack<T extends CompoItem = CompoItem> = T[];
+export type CompoQueue<T extends CompoItem = CompoItem> = CompoStack<T>[];
 
-export type ExtractCompoItemData<T extends CompoItem> = T extends CompoItem<any, infer U, any>
+export type ExtractCompoItemData<T extends CompoItem> = T extends CompoItem<
+  any,
+  infer U,
+  any
+>
   ? U
   : never;
 
@@ -52,14 +56,14 @@ export interface UseCompoQueueOptions {
 // STATE
 ////////////////////////////
 
-interface UseCompoQueueState {
+interface UseCompoQueueState<T extends CompoItem = CompoItem> {
   /**
    * Queue of components that will be displayed one by one. But each component
    * can call in "child" components, hence each item in the queue is actually a stack.
    */
-  queueOfStacks: Ref<CompoQueue>;
+  queueOfStacks: Ref<CompoQueue<T>>;
   /** The component that's currently displayed */
-  currItem: Ref<CompoItem | null>;
+  currItem: Ref<T | null>;
   /**
    * Data from invocation of previous component. Defined only if the previous component
    * was in the same stack as this one.
@@ -70,8 +74,11 @@ interface UseCompoQueueState {
 export const CompoQueueKey = Symbol('CompoQueue');
 
 // Use Vue's provide/inject for global state management
-const initState = (namespace?: string) => {
-  let state = inject<Record<string, UseCompoQueueState> | null>(CompoQueueKey, null);
+const initState = <T extends CompoItem = CompoItem>(namespace?: string) => {
+  let state = inject<Record<string, UseCompoQueueState<T>> | null>(
+    CompoQueueKey,
+    null,
+  );
   if (!state) {
     state = {};
     provide(CompoQueueKey, state);
@@ -103,7 +110,11 @@ const getOrCreateStack = (queue: CompoQueue, queueIndex?: number) => {
   return stack;
 };
 
-const upsertStackItem = (stack: CompoStack, item: CompoItem, posIndex?: number) => {
+const upsertStackItem = (
+  stack: CompoStack,
+  item: CompoItem,
+  posIndex?: number,
+) => {
   // If valid stack index, insert the component into given position,
   // shifting all subsequent components by +1
   if (posIndex != null && stack[posIndex]) {
@@ -115,7 +126,9 @@ const upsertStackItem = (stack: CompoStack, item: CompoItem, posIndex?: number) 
   return stack.indexOf(item);
 };
 
-const findNextStack = (queue: CompoQueue) => {
+const findNextStack = <T extends CompoItem = CompoItem>(
+  queue: CompoQueue<T>,
+) => {
   let stack = null;
   while (queue.length && !stack) {
     const nextStack = queue[0];
@@ -129,7 +142,9 @@ const findNextStack = (queue: CompoQueue) => {
   return stack;
 };
 
-const getNextItem = (queue: CompoQueue): { stack: CompoStack | null; item: CompoItem | null } => {
+const getNextItem = <T extends CompoItem = CompoItem>(
+  queue: CompoQueue<T>,
+): { stack: CompoStack<T> | null; item: T | null } => {
   const stack = findNextStack(queue);
   if (!stack || !stack.length) return { stack, item: null };
 
@@ -205,7 +220,7 @@ const getNextItem = (queue: CompoQueue): { stack: CompoStack | null; item: Compo
  *      `emit('done', { someValue: '...' })`
  */
 export const useComponentQueue = <TRendererProps extends object = object>(
-  options?: UseCompoQueueOptions
+  options?: UseCompoQueueOptions,
 ) => {
   type CurrCompoItem = CompoItem<object, any, object, TRendererProps>;
 
@@ -217,7 +232,7 @@ export const useComponentQueue = <TRendererProps extends object = object>(
   //
   // Think of it like this: The last added modal is show on the top of all other modals in the UI.
   // When we close the top modal, we pop it off from the stack, etc.
-  const { queueOfStacks, currItem, childResult } = initState();
+  const { queueOfStacks, currItem, childResult } = initState<CurrCompoItem>();
 
   const createItem = <T extends CurrCompoItem>(input: {
     component: Component;
@@ -279,7 +294,8 @@ export const useComponentQueue = <TRendererProps extends object = object>(
    */
   const openNextItem = () => {
     // Exit early if already in progress or queue is empty
-    if (currItem.value || !queueOfStacks.value.length) return { stack: null, item: null };
+    if (currItem.value || !queueOfStacks.value.length)
+      return { stack: null, item: null };
 
     // NOTE: We don't remove the item from the stack until after the item is done
     // in case we come across any errors and need to re-open the component again
@@ -339,7 +355,7 @@ export const useComponentQueue = <TRendererProps extends object = object>(
 export type ItemDef<
   TProps extends object = object,
   TEmit = void,
-  TState extends object = object
+  TState extends object = object,
 > = {
   props: TProps;
   emit: TEmit;
@@ -349,7 +365,7 @@ export type ItemDef<
 /** Transform ItemDef to CompoItem. */
 export type ItemDef2CompoItem<
   T extends ItemDef<object, any, object>,
-  TRendererProps extends object = object
+  TRendererProps extends object = object,
 > = CompoItem<T['props'], T['emit'], T['state'], TRendererProps>;
 
 /**
@@ -363,7 +379,10 @@ export type ItemDef2CompoItem<
  * [vite:vue] [@vue/compiler-sfc] Unresolvable type reference or unsupported built-in utility type
  * ```
  */
-export type ItemDef2Props<T extends ItemDef<object, any, object>, TChildRes = any> = {
+export type ItemDef2Props<
+  T extends ItemDef<object, any, object>,
+  TChildRes = any,
+> = {
   state: T['state'];
   childResult: TChildRes;
 } & T['props'];
@@ -405,13 +424,16 @@ export type ItemDef2Emits<TItem extends ItemDef<object, any, object>> = {
  */
 export const createNamedUseComponentQueue = <
   TItems extends Record<string, { props: object; emit: any; state: object }>,
-  TRendererProps extends object = object
+  TRendererProps extends object = object,
 >(
   components: Record<keyof TItems, Component>,
-  defaultOptions?: UseCompoQueueOptions
+  defaultOptions?: UseCompoQueueOptions,
 ) => {
   return (options?: UseCompoQueueOptions) => {
-    const queue = useComponentQueue<TRendererProps>({ ...defaultOptions, ...options });
+    const queue = useComponentQueue<TRendererProps>({
+      ...defaultOptions,
+      ...options,
+    });
 
     const createChild = <TKey extends keyof TItems>(input: {
       name: TKey;
