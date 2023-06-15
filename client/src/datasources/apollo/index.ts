@@ -4,7 +4,7 @@ import { logErrorMessages } from '@vue/apollo-util';
 import type { TypePolicy } from '@apollo/client/cache';
 
 import type { StrictTypedTypePolicies } from '@/../__generated__/graphql';
-import possibleTypes from '../../__generated__/graphqlPossibleTypes';
+// import possibleTypes from '../../__generated__/graphqlPossibleTypes'; // TODO - enable once these are generated
 import { config } from '../../globals/config';
 
 const POLICY_NO_MERGE = { merge: false } satisfies TypePolicy;
@@ -56,7 +56,7 @@ export const apolloConfig = defineApolloClient({
     },
   },
   inMemoryCacheOptions: {
-    possibleTypes: possibleTypes.possibleTypes,
+    // possibleTypes: possibleTypes.possibleTypes, // TODO - enable once these are generated
     typePolicies,
   },
   tokenName: 'apollo:<client-name>.token',

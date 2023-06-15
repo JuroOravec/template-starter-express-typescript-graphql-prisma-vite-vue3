@@ -880,4 +880,4 @@ export type GqlDirectiveResolvers<ContextType = ResolverContext> = {
   paginate?: GqlPaginateDirectiveResolver<any, any, ContextType>;
 };
 
-// Generated on 2023-06-12T12:17:20+02:00
+// Generated on 2023-06-15T22:35:08+02:00
