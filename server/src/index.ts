@@ -16,7 +16,7 @@ process.on('unhandledRejection', (err): void => {
 });
 
 process.on('uncaughtException', (error): void => {
-  logger.error('Uncaught exception', { error: error.toString(), stack: error.stack });
+  logger.error({ error: error.toString(), stack: error.stack }, 'Uncaught exception');
   process.exit(1);
 });
 

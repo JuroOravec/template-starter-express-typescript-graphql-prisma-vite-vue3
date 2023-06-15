@@ -24,7 +24,7 @@ import { mfaPathScope } from '@/modules/mfa/constants';
 import { createMfa } from '@/modules/mfa/lib/mfa';
 import { paygateJobs } from '@/modules/paygate/jobs';
 import { createPaddleClient } from '@/datasources/paddle/client';
-import { setupJobs } from '@/utils/jobs';
+import { setupJobs } from '@/lib/jobs';
 import { catchHandlerError } from '../utils';
 
 export const createExpressServer = async ({
