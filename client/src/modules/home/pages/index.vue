@@ -6,8 +6,6 @@
       lg: display.width.value > 750,
     }"
   >
-    <HomeHero class="px-2" @click-datasets="() => router.push(HomeRouteEnum.scrapers)" />
-
     <div class="global-sections">
       <Section title="Form">
         <FormPriceEstimate />
@@ -52,6 +50,8 @@
         <br />
         Wish you had it in your last project.
       </div>
+
+      <Products />
     </div>
   </div>
 </template>
@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
 
-import { homeRoutes, HomeRouteEnum } from '../router';
+import { homeRoutes } from '../router';
 import FormPriceEstimate from '../components/FormPriceEstimate.vue';
 
 definePageMeta(homeRoutes.home);
