@@ -12,6 +12,7 @@ import { provideApolloClients } from '@vue/apollo-composable';
 
 import { useJobs } from '../lib/jobs';
 import { homeJobs } from '../modules/home/jobs';
+import { useHomeModal } from '../modules/home/composables/useHomeModal';
 
 // NOTE: For some reason the Vue apollo plugin doesn't do it for us
 const { clients } = useApollo(); // eslint-disable-line no-undef
