@@ -26,7 +26,7 @@ const configs = Object.freeze({
   dev: {
     apolloUrl: 'http://localhost:3000/graphql',
     apolloEnableDebug: true,
-    analyticsUrl: null,
+    analyticsUrl: 'https://localhost:3000/_t/a/m',
     analyticsMixpanelToken: null,
     errorTrackUrl: null,
     errorTrackSentryDns: null,
@@ -34,11 +34,15 @@ const configs = Object.freeze({
     paygatePaddleVendorId: null,
   },
   prd: {
-    apolloUrl: 'http://localhost:3000/graphql', // TODO
+    apolloUrl: 'https://api.example.com/graphql',
     apolloEnableDebug: false,
-    analyticsUrl: 'http://localhost:3000/_t/a/m', // Routed via server // TODO
+    analyticsUrl: 'https://api.example.com/_t/a/m',
     analyticsMixpanelToken: '0123456789abcdef0123456789abcdef',
-    errorTrackUrl: 'http://localhost:3000/_t/e', // Routed via server // TODO
+    // TODO - Figure out how to use Express endpoint as tunnel
+    //        See https://docs.sentry.io/platforms/javascript/troubleshooting/
+    //        And https://github.com/getsentry/examples/blob/master/tunneling/python/app.py
+    // errorTrackUrl: 'https://api.example.com/_t/e',
+    errorTrackUrl: 'https://1234578...@o123456.ingest.sentry.io/12345678...',
     errorTrackSentryDns:
       'https://1234578...@o123456.ingest.sentry.io/12345678...',
     paygatePaddleEnv: 'sandbox',
