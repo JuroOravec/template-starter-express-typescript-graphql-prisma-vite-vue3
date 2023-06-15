@@ -31,8 +31,10 @@ to keep ownership and maintainability in check.
   - Smart queue management for system-wide components like modals, snackbars, etc.
   - Declarative and fully-typed forms
   - Separation of design system (component library) and "business logic" components
+- Telemetry
   - Usage analytics with Mixpanel with fully-typed events
   - Error tracking with Sentry
+  - Both Mixpanel and Sentry tunnelled through the server to avoid ad blockers
 - Type safety
   - Fully typed, from users' input, through server-client communication (Apollo), to database connectors
 
