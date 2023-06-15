@@ -1,11 +1,12 @@
 <template>
   <div class="FormSimple">
     <v-form
-      v-show="!completed"
       v-bind="$attrs"
+      class="form"
+      :class="{ completed }"
+      netlify
+      style="gap: 20px;"
       @submit.prevent="onSubmit"
-      class="pa-4 d-flex flex-column"
-      style="gap: 20px"
     >
       <slot name="prepend" v-bind="{ ...slotProps }" />
 
@@ -32,10 +33,14 @@
       <slot name="append" v-bind="{ ...slotProps }" />
       <slot name="controls" v-bind="{ ...slotProps }">
         <div class="controls py-6">
-          <VBtnPrimary :disabled="vuelidate.$invalid" type="submit"> Submit </VBtnPrimary>
+          <div class="controls__actions">
+            <slot name="action-prepend" v-bind="{ ...slotProps }" />
+            <VBtnPrimary :disabled="vuelidate.$invalid" type="submit"> Submit </VBtnPrimary>
+            <slot name="action-append" v-bind="{ ...slotProps }" />
+          </div>
           <div
             v-if="vuelidate.$errors.length"
-            class="text-caption global-form-caption global-form-error"
+            class="controls__error text-caption global-form-caption global-form-error"
           >
             Please fix {{ vuelidate.$errors.length }} error(s) before submission.
           </div>
@@ -58,17 +63,37 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends FormField<any, any, any>">
 import type { Validation } from '@vuelidate/core';
 
-import type { FormField } from '../composables/useForm';
+import type { MaybeGroupedArr } from '@/../lib/typedForm/utils';
+import type { FormField, FormFieldToType } from '../composables/useForm';
+import { useForm } from '../composables/useForm';
 
 defineOptions({ inheritAttrs: false });
+defineSlots<{
+  prepend?: (props: typeof slotProps) => void;
+  append?: (props: typeof slotProps) => void;
+  controls?: (props: typeof slotProps) => void;
+  'action-prepend'?: (props: typeof slotProps) => void;
+  'action-append'?: (props: typeof slotProps) => void;
+  'form-completed'?: (props: typeof slotProps) => void;
+} & {
+  [Key in `group[${number}].prepend`]?: (props: typeof slotProps & { formGroup: FormField[] }) => void;
+} & {
+  [Key in `group[${number}].append`]?: (props: typeof slotProps & { formGroup: FormField[] }) => void;
+} & {
+  [Key in `field[${keyof FormFieldToType<T>}].prepend`]?: (props: typeof slotProps & { field: FormField; formGroup: FormField[] }) => void;
+  } & {
+  [Key in `field[${keyof FormFieldToType<T>}].append`]?: (props: typeof slotProps & { field: FormField; formGroup: FormField[] }) => void;
+}>();
 
 const props = defineProps<{
-  fields: (FormField<any> | FormField<any>[])[];
+  fields: MaybeGroupedArr<T>;
   loading?: boolean;
   completed?: boolean;
+  /** Allow form data collection via Netlify. See https://docs.netlify.com/forms/setup/#html-forms */
+  netlify?: boolean;
 }>();
 const { fields } = toRefs(props);
 const emit = defineEmits<{ submit: [{ vuelidate: Validation; state: Record<string, any> }] }>();
@@ -95,6 +120,16 @@ defineExpose({ ...slotProps });
 <style lang="scss">
 .FormSimple {
   position: relative;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+
+    &.completed {
+      display: none;
+    }
+  }
 
   .form-step-content {
     display: flex;

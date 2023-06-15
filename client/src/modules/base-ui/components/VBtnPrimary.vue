@@ -2,9 +2,7 @@
 <VBtn
   class="VBtnPrimary"
   :class="{ 'border': props.border }"
-  variant="flat"
   size="x-large"
-  rounded="0"
   color="#5ac1a6"
   v-bind="$attrs"
 >
@@ -28,6 +26,7 @@ const props = defineProps<{ border?: boolean }>();
   color: white !important;
   font-family: 'Secular One', 'Roboto', sans-serif;
   border: 0;
+  border-radius: 4px;
 
   &.border {
     border-bottom: 4px solid white;

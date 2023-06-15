@@ -1,9 +1,10 @@
 <template>
 <VBtn
   class="VBtnSecondary px-12"
-  variant="flat"
+  :class="{ error: props.error }"
+  :variant="props.error ? 'tonal' : 'flat'"
+  :color="props.error ? 'error' : undefined"
   size="x-large"
-  rounded="0"
   v-bind="$attrs"
 >
   <slot />
@@ -14,6 +15,7 @@
 defineOptions({
   inheritAttrs: false,
 });
+const props = defineProps<{ error?: boolean }>();
 defineSlots<{ default: () => void }>();
 </script>
 
@@ -26,6 +28,7 @@ defineSlots<{ default: () => void }>();
   color: #868686;
   font-family: 'Secular One', 'Roboto', sans-serif;
   border: 1px solid #a6a6a6;
+  border-width: 1px !important;
 
   &:hover {
     text-decoration: underline;
@@ -33,6 +36,18 @@ defineSlots<{ default: () => void }>();
 
   &.v-btn--disabled {
     border: 0;
+  }
+
+  .v-btn__content {
+    opacity: 0.8;
+  }
+
+  &.error {
+    border-color: var(--v-theme-error);
+
+    .v-btn__underlay {
+      opacity: 0.05;
+    }
   }
 }
 </style>

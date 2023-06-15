@@ -1,6 +1,11 @@
 <template>
   <div class="FormMultistep">
-    <v-form v-show="!completed" v-bind="$attrs" @submit.prevent="onSubmit">
+    <v-form
+      class="form"
+      :class="{ completed }"
+      v-bind="$attrs"
+      @submit.prevent="onSubmit"
+    >
       <v-carousel
         v-model="formStep"
         :continuous="false"
@@ -39,16 +44,18 @@
         <slot name="append" v-bind="{ ...slotProps }" />
         <slot name="controls" v-bind="{ ...slotProps }">
           <div class="controls py-6">
-            <div class="d-flex justify-space-between">
+            <div class="controls__actions d-flex justify-space-between">
+              <slot name="action-prepend" v-bind="{ ...slotProps }" />
               <VBtnSecondary :disabled="!hasPrevStep" @click="goPrevStep"> Prev </VBtnSecondary>
               <VBtnPrimary v-if="hasNextStep" @click="goNextStep"> Next </VBtnPrimary>
               <VBtnPrimary v-else :disabled="vuelidate.$invalid" type="submit">
                 Submit
               </VBtnPrimary>
+              <slot name="action-append" v-bind="{ ...slotProps }" />
             </div>
             <div
               v-if="!hasNextStep && vuelidate.$errors.length"
-              class="text-caption global-form-caption global-form-error text-right"
+              class="controls__error text-caption global-form-caption global-form-error text-right"
             >
               Please fix {{ vuelidate.$errors.length }} error(s) before submission.
             </div>
@@ -72,17 +79,37 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends FormField<any, any, any>">
 import type { Validation } from '@vuelidate/core';
 
-import { useForm, FormFieldList } from '../composables/useForm';
+import type { MaybeGroupedArr } from '@/../lib/typedForm/utils';
+import type { FormField, FormFieldToType } from '../composables/useForm';
+import { useForm } from '../composables/useForm';
 
 defineOptions({ inheritAttrs: false });
+defineSlots<{
+  prepend?: (props: typeof slotProps) => void;
+  append?: (props: typeof slotProps) => void;
+  controls?: (props: typeof slotProps) => void;
+  'action-prepend'?: (props: typeof slotProps) => void;
+  'action-append'?: (props: typeof slotProps) => void;
+  'form-completed'?: (props: typeof slotProps) => void;
+} & {
+  [Key in `group[${number}].prepend`]?: (props: typeof slotProps & { formGroup: FormField[] }) => void;
+} & {
+  [Key in `group[${number}].append`]?: (props: typeof slotProps & { formGroup: FormField[] }) => void;
+} & {
+  [Key in `field[${keyof FormFieldToType<T>}].prepend`]?: (props: typeof slotProps & { field: FormField; formGroup: FormField[] }) => void;
+  } & {
+  [Key in `field[${keyof FormFieldToType<T>}].append`]?: (props: typeof slotProps & { field: FormField; formGroup: FormField[] }) => void;
+}>();
 
 const props = defineProps<{
-  fields: FormFieldList;
+  fields: MaybeGroupedArr<T>;
   loading?: boolean;
   completed?: boolean;
+  /** Allow form data collection via Netlify. See https://docs.netlify.com/forms/setup/#html-forms */
+  netlify?: boolean;
 }>();
 const { fields } = toRefs(props);
 const emit = defineEmits<{ submit: [{ vuelidate: Validation; state: Record<string, any> }] }>();
@@ -133,6 +160,12 @@ defineExpose({ ...slotProps });
 <style lang="scss">
 .FormMultistep {
   position: relative;
+
+  .form {
+    &.completed {
+      display: none;
+    }
+  }
 
   .form-step-content {
     display: flex;
