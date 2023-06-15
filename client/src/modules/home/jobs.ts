@@ -56,7 +56,7 @@ const handleMfaPayload: Job<JobContext> = async ({ modal, router }, done) => {
   // Handle the case when MFA verification failed
   if (!mfa) {
     // TODO - Change used modal component - This is for demo only
-    modal.push({ name: 'checkoutFail', props: {} });
+    modal.push({ name: 'mfaFail', props: {} });
     // Remove the ?mfa-fail query param
     router.replace({
       query: { ...router.currentRoute.value.query, 'mfa-fail': undefined },
