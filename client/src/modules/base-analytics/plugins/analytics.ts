@@ -1,4 +1,7 @@
-import { CustomAnalyticsInstance, createAnalyticsInstance } from '../lib/analytics';
+import {
+  CustomAnalyticsInstance,
+  createAnalyticsInstance,
+} from '../lib/analytics';
 
 // See https://nuxt.com/docs/guide/directory-structure/plugins#advanced
 declare module '@vue/runtime-core' {
@@ -19,7 +22,6 @@ const analyticsPlugin = defineNuxtPlugin({
   async setup(nuxtApp) {
     const { vueApp } = nuxtApp;
     const analytics = createAnalyticsInstance();
-
     await analytics.init();
 
     vueApp.config.globalProperties.$analytics = analytics;

@@ -1,4 +1,7 @@
-import { ErrorTrackerInstance, createErrorTrackerInstance } from '../lib/errorTracker';
+import {
+  ErrorTrackerInstance,
+  createErrorTrackerInstance,
+} from '../lib/errorTracker';
 
 // See https://nuxt.com/docs/guide/directory-structure/plugins#advanced
 declare module '@vue/runtime-core' {
@@ -19,6 +22,7 @@ const errorTrackerPlugin = defineNuxtPlugin({
   async setup(nuxtApp) {
     const { vueApp } = nuxtApp;
     const errorTracker = createErrorTrackerInstance(vueApp);
+    await errorTracker.init();
 
     vueApp.config.globalProperties.$errorTracker = errorTracker;
 
