@@ -1,12 +1,13 @@
 import difference from 'lodash/difference';
 
-import type { MaybePromise } from './types';
+import type { MaybePromise } from '../../utils/types';
+import { logger } from '@/globals/logger';
 
 export type Job<T = unknown> = (args: T, done: () => void) => MaybePromise<void>;
 
 export interface JobOptions<T = unknown> {
   jobs: Job<T>[];
-  args?: T;
+  args: T;
   intervalMs?: number;
 }
 
@@ -23,7 +24,7 @@ export const setupJobs = <T>(input: JobOptions<T>) => {
     // NOTE: Jobs can signal that they've finished and don't need to be called anymore
     for (const job of remainingJobs) {
       const onDone = () => jobsToRemove.push(job);
-      await job(input.args!, onDone);
+      await job(input.args, onDone);
     }
 
     // We remove the finished jobs in a different step than we run the current jobs,
@@ -32,7 +33,7 @@ export const setupJobs = <T>(input: JobOptions<T>) => {
   };
 
   const intervalId = setInterval(() => {
-    runJobs().catch((error: Error) => console.error({ error }, `Job failed: ${error}`.trim()));
+    runJobs().catch((error: Error) => logger.error({ error }, `Job failed: ${error}`.trim()));
   }, input?.intervalMs ?? checkIntervalMs);
 
   return () => clearInterval(intervalId);
