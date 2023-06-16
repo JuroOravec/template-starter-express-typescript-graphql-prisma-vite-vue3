@@ -2,6 +2,11 @@
   // https://nuxt.com/docs/guide/concepts/typescript
   "extends": "./.nuxt/tsconfig.json",
   "ts-node": {
+    // Allow module import syntax, see https://stackoverflow.com/questions/63445821
+    "esm": true,
+    "compilerOptions": {
+      "module": "nodenext",
+    },
     // See https://www.reddit.com/r/node/comments/13s9ksj or https://typestrong.org/ts-node/docs/swc/
     "swc": true,
   },

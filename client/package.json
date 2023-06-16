@@ -14,6 +14,7 @@
     "nuxt:prd": "dotenv -e .env.prd -- nuxt",
     "nuxt:dev": "dotenv -e .env.dev -- nuxt",
     "build:ssg": "npm run nuxt:prd -- generate",
+    "build:ssg:ci": "ts-node ./scripts/buildSSG",
     "build:ssr": "npm run nuxt:prd -- build",
     "start:ssr": "npm run nuxt:prd -- start",
     "dev": "npm run dev:dev",
