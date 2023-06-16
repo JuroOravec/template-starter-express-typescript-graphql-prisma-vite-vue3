@@ -13,13 +13,17 @@ to keep ownership and maintainability in check.
 
 - Webhooks (e.g. receive webhook events from Paddle)
 - Multi-factor authentication
-- Email
-  - Send emails
-  - Receive emails - email-based webhook (run code on received email)
+- Email (mailserver)
+  - Send emails (nodemailer)
+  - Receive emails (STMP server + SendGrid (mail relay server))
+    - email-based webhook (run code on received email)
     - E.g. forward email to private email address when server receives email
     - Deduplication of incoming email
 - User authentication
 - User session
+- Forms
+  - Validated, typed
+  - Submission confirmation sent to submitter + us
 - CI/CD - test, build, deploy flow in Gitlab CI
 - Database
   - Read / write and version mgmt with Prisma
@@ -37,9 +41,14 @@ to keep ownership and maintainability in check.
   - Both Mixpanel and Sentry tunnelled through the server to avoid ad blockers
 - Type safety
   - Fully typed, from users' input, through server-client communication (Apollo), to database connectors
+- Cron jobs
+  - Used for creating database backups regularly
 
 ## Stack
 
+- Server
+  - virtual machine - DigitalOcean Droplet + Ubuntu + docker-compose
+  - deployment - container registry + deployment jobs via Gitlab CI
 - TypeScript
   - Fast compilation with swc (see https://typestrong.org/ts-node/docs/swc/)
 - Apollo GraphQL
