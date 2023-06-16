@@ -25,6 +25,10 @@
     "strict": true,
     "strictPropertyInitialization": false
   },
+  "ts-node": {
+    // See https://www.reddit.com/r/node/comments/13s9ksj or https://typestrong.org/ts-node/docs/swc/
+    "swc": true,
+  },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

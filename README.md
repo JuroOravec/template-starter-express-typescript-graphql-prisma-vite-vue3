@@ -41,6 +41,7 @@ to keep ownership and maintainability in check.
 ## Stack
 
 - TypeScript
+  - Fast compilation with swc (see https://typestrong.org/ts-node/docs/swc/)
 - Apollo GraphQL
   - Schema definition + resolvers split across files by resources they relate to
   - Scalar validation with [graphql-scalars](https://the-guild.dev/graphql/scalars/docs/quick-start)
