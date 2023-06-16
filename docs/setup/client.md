@@ -92,3 +92,43 @@ Beside that, see these tutorials for more context of setting up Vuetify 3 with N
 
 - NOTE: If we ever need to migrate from default Nuxt project structure,
   we can use [plugin with hooks to define components outside of the folder sturcture](https://nuxt.com/docs/guide/directory-structure/components#library-authors)
+
+## Deployment
+
+### Netlify
+
+We use [Netlify](https://app.netlify.com/teams/jurooravec/overview) to deploy the client site
+as static files.
+
+There's many options for deploymenet, Netlify is just one of the that's convenient.
+
+Unfortunately, for some reason, the automatic CI deployment doesn't work, because netlify
+CI worker refuses to publish on warnings. Hence, we deploy manually via [Netlify CLI](https://docs.netlify.com/cli/get-started/).
+
+- Learn more
+  - <https://stackoverflow.com/questions/62415804>
+  - <https://answers.netlify.com/t/deploy-fails-non-zero-exit-code-on-bundler-install/70245/19>
+  - <https://answers.netlify.com/t/netlify-not-building-command-failed-with-exit-code-1-npm-run-build/16999>
+  - <https://dev.to/engineervinay/how-to-deploy-react-project-with-warnings-on-netlify-1ahe>
+
+#### Deployment commands
+
+1. Authenticate with Netlify
+
+```bash
+npm run netlify:login
+```
+
+2. Create preview deployment
+
+```bash
+npm run netlify:deploy
+```
+
+3. Check that everything works
+
+4. If so, publish to prod
+
+```bash
+npm run netlify:deploy:prd
+```

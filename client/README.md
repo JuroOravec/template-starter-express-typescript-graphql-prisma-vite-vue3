@@ -45,6 +45,28 @@ npm run preview
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
+### Deployment
+
+1. Authenticate with Netlify
+
+```bash
+npm run netlify:login
+```
+
+2. Create preview deployment
+
+```bash
+npm run netlify:deploy
+```
+
+3. Check that everything works
+
+4. If so, publish to prod
+
+```bash
+npm run netlify:deploy:prd
+```
+
 ## Development
 
 ### Project structure
