@@ -1,4 +1,5 @@
 import Joi from 'joi';
+import { tlds } from '@hapi/tlds';
 
 /** App environements. */
 export enum AppEnv {
@@ -7,15 +8,32 @@ export enum AppEnv {
 }
 
 interface Config {
+  /** Public URL where this frontend app can be accessed */
+  publicUrl: string;
   apolloUrl: string;
   apolloEnableDebug: boolean;
-  analyticsUrl: string | null;
+  analyticsUrl: string;
   analyticsMixpanelToken: string | null;
   errorTrackUrl: string | null;
   errorTrackSentryDns: string | null;
   paygatePaddleEnv: 'sandbox' | 'prod';
   paygatePaddleVendorId: string | null;
+  legalCompanyName: string;
+  legalCompanyCountry: string;
+  legalCompanyCountryLang: string;
+  legalEmail: string;
+  legalAddress: string[];
+  legalDpoContactName: string;
 }
+
+const legal = {
+  legalCompanyName: 'Example Ltd',
+  legalCompanyCountry: 'Slovakia',
+  legalCompanyCountryLang: 'Slovak',
+  legalEmail: 'legal@example.com',
+  legalAddress: ['Street Name 1', '12345', 'City', 'Country'],
+  legalDpoContactName: 'FirstName LastName',
+} satisfies Partial<Config>;
 
 /**
  * Config definitions per environment.
@@ -24,6 +42,7 @@ interface Config {
  */
 const configs = Object.freeze({
   dev: {
+    publicUrl: 'https://example.com',
     apolloUrl: 'http://localhost:3000/graphql',
     apolloEnableDebug: true,
     analyticsUrl: 'https://localhost:3000/_t/a/m',
@@ -32,8 +51,10 @@ const configs = Object.freeze({
     errorTrackSentryDns: null,
     paygatePaddleEnv: 'sandbox',
     paygatePaddleVendorId: null,
+    ...legal,
   },
   prd: {
+    publicUrl: 'https://example.com',
     apolloUrl: 'https://api.example.com/graphql',
     apolloEnableDebug: false,
     analyticsUrl: 'https://api.example.com/_t/a/m',
@@ -47,11 +68,13 @@ const configs = Object.freeze({
       'https://1234578...@o123456.ingest.sentry.io/12345678...',
     paygatePaddleEnv: 'sandbox',
     paygatePaddleVendorId: '12345',
+    ...legal,
   },
 }) satisfies Record<AppEnv, Config>;
 
 /** Validation for the configs. */
 const configValidationSchema = Joi.object<Config>({
+  publicUrl: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).required(), // prettier-ignore
   apolloUrl: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).required(), // prettier-ignore
   apolloEnableDebug: Joi.boolean(),
   analyticsUrl: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).required(), // prettier-ignore
@@ -60,6 +83,12 @@ const configValidationSchema = Joi.object<Config>({
   errorTrackSentryDns: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).allow(null), // prettier-ignore
   paygatePaddleEnv: Joi.string().min(1).allow('sandbox', 'prod').required(), // prettier-ignore
   paygatePaddleVendorId: Joi.string().min(1).allow(null), // prettier-ignore
+  legalCompanyName: Joi.string().min(1).required(), // prettier-ignore
+  legalCompanyCountry: Joi.string().min(1).required(), // prettier-ignore
+  legalCompanyCountryLang: Joi.string().min(1).required(), // prettier-ignore
+  legalEmail: Joi.string().min(1).email({ tlds: { allow: tlds } }).required(), // prettier-ignore
+  legalAddress: Joi.array().items(Joi.string().min(1).required()).required(), // prettier-ignore
+  legalDpoContactName: Joi.string().min(1).required(), // prettier-ignore
 } satisfies Record<keyof Config, Joi.Schema>).required();
 
 const createConfig = <TConfig = any, TKey extends string = string>({

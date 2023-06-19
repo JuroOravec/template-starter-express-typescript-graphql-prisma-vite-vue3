@@ -45,6 +45,16 @@ useHead({
   ],
   script: [
     {
+      // Termly's cookie consent banner
+      // - https://help.termly.io/support/solutions/articles/69000108884-how-to-install-your-consent-banner
+      // - https://help.termly.io/support/solutions/articles/69000252637-auto-blocker-implementation-guide
+      // - https://help.termly.io/support/solutions/articles/69000800594-troubleshooting-your-termly-installation
+      type: 'text/javascript',
+      src: 'https://app.termly.io/embed.min.js',
+      'data-auto-block': 'on',
+      'data-website-uuid': '6eafe6de-c445-4f07-8852-290c6824af52',
+    },
+    {
       // Set up Paddle - See https://developer.paddle.com/getting-started/39437d80612f3-import-the-paddle-js-library
       src: 'https://cdn.paddle.com/paddle/paddle.js',
     },
