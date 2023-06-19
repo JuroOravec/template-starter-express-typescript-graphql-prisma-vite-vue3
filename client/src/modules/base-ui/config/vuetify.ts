@@ -12,9 +12,10 @@ const aliases = {
 };
 
 /** Defaults for our own components */
-const vuetifyDefaultsCustom = {
+const customDefaults = {
   DefaultLayout: {
     siteName,
+    homeLink: '/',
   },
   SubsectionRow: {
     wrap: true,
@@ -22,6 +23,15 @@ const vuetifyDefaultsCustom = {
   },
   List: {
     type: 'ul',
+  },
+  Enum: {
+    divider: ', ',
+  },
+  Linkable: {
+    openInNewTab: 'external',
+    underline: true,
+    color: '#1D2E54',
+    colorHover: '#E75B5B',
   },
   // VBtnPrimary: {
   //   class: 'cta px-12',
@@ -58,7 +68,7 @@ const vuetifyDefaults = {
 export const vuetifyOptions: VuetifyOptions = {
   defaults: {
     ...vuetifyDefaults,
-    ...vuetifyDefaultsCustom,
+    ...customDefaults,
   },
   // See https://vuetifyjs.com/en/features/icon-fonts/#install-material-icons
   icons: {

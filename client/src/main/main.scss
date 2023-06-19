@@ -34,6 +34,16 @@
   line-height: 1;
 }
 
+// If someone navigates to an ID (e.g. www.example/path#id), then offset that element
+// so it's shown below the nav bar
+// See https://stackoverflow.com/questions/10732690
+:target[id]:before {
+  content: '';
+  display: block;
+  height: 30px;
+  margin: 30px 0 0;
+}
+
 ////////////////////////////////////
 // VUETIFY OVERRIDES
 ////////////////////////////////////
