@@ -18,7 +18,7 @@
   import type { NuxtLinkProps } from 'nuxt/app';
   import { useDefaults } from 'vuetify';
   import type { RouteLocationRaw } from 'vue-router';
-  import { omit } from 'lodash';
+  import omit from 'lodash/omit';
   
   defineSlots<{ default: () => void }>();
   defineOptions({ inheritAttrs: false });

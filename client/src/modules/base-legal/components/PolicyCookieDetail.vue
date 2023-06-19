@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { capitalize } from 'lodash';
+import capitalize from 'lodash/capitalize';
 
 import type { PolicyCookie } from '../types';
 

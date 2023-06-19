@@ -21,7 +21,7 @@
 
       <ul class="global-list">
         <li>
-          Visit our website at <Linkable :to="config.publicUrl" />, or any website of ours that
+          Visit our website at <Linkable :to="config.sitePublicUrl" />, or any website of ours that
           links to this privacy notice
         </li>
         <li>
@@ -45,7 +45,7 @@
         This summary provides key points from our privacy notice, but you can find out more
         details about any of these topics by clicking the link following each key point or
         by using our
-        <Linkable to="#toc">table of contents</Linkable>
+        <Linkable :to="getHashLink({ id: 'toc' })">table of contents</Linkable>
         below to find the section you are looking for.
       </strong>
     </div>
@@ -57,7 +57,7 @@
       {{ config.legalCompanyName }}
       and the Services, the choices you make, and the products and features you use.
       Learn more about
-      <Linkable href="#personalinfo">personal information you disclose to us</Linkable>.
+      <Linkable :to="getHashLink({ id: 'personalinfo' })">personal information you disclose to us</Linkable>.
     </div>
 
     <div>
@@ -112,14 +112,14 @@
 
     <div>
       Want to learn more about what {{ config.legalCompanyName }} does with any information we collect?
-      <Linkable to="#toc">Review the privacy notice in full</Linkable>.
+      <Linkable :to="getHashLink({ id: 'toc' })">Review the privacy notice in full</Linkable>.
     </div>
 
     <h2 id="toc" class="text-h4">TABLE FO CONTENTS</h2>
     <div>
       <List type="ol" :items="tocList">
         <template #="{ item }">
-          <Linkable :to="getTocItemLink(item)">{{ item.title }}</Linkable>
+          <Linkable :to="getHashLink(item)">{{ item.title }}</Linkable>
         </template>
       </List>
     </div>
@@ -382,7 +382,7 @@
           We may process your information if you have given us permission (i.e., consent)
           to use your personal information for a specific purpose. You can withdraw your
           consent at any time. Learn more about
-          <Linkable to="#withdrawconsent">withdrawing your consent</Linkable>.
+          <Linkable :to="getHashLink({ id: 'withdrawconsent' })">withdrawing your consent</Linkable>.
         </li>
 
         <li>
@@ -434,7 +434,7 @@
       We may process your information if you have given us specific permission (i.e., express
       consent) to use your personal information for a specific purpose, or in situations where your
       permission can be inferred (i.e., implied consent). You can
-      <Linkable to="#withdrawconsent">withdraw your consent</Linkable>
+      <Linkable :to="getHashLink({ id: 'withdrawconsent' })">withdraw your consent</Linkable>
       at any time.
     </div>
 
@@ -1080,7 +1080,7 @@ import { format } from 'date-fns';
 import mapValues from 'lodash/mapValues';
 
 import { config } from '@/../globals/config';
-import { legalRoutes } from '../router';
+import { legalRoutes } from '../../router';
 
 definePageMeta(legalRoutes['privacy-policy']);
 
@@ -1106,8 +1106,10 @@ const toc = {
   '16_contact': { title: '16. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?', id: 'contact' },
   '17_request': { title: '17. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM YOU?', id: 'request' },
 } satisfies Record<string, { title: string; id: string }>;
-const getTocItemLink = (item: { title: string; id: string }) => `#${item.id}`;
-const tocLinks = mapValues(toc, (item) => getTocItemLink(item));
+const getHashLink = (item: { id: string }) => {
+  return { hash: `#${item.id}` };
+};
+const tocLinks = mapValues(toc, (item) => getHashLink(item));
 const tocList = Object.values(toc);
 
 const collectedPII = ['names', 'phone numbers', 'email addresses', 'mailing addresses', 'job titles', 'usernames', 'passwords', 'contact preferences', 'contact or authentication data'];

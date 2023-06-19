@@ -15,7 +15,7 @@
       </Enum>)
       uses cookies and similar technologies to recognize you when you
       visit our website at
-      {{ config.publicUrl }}
+      {{ config.sitePublicUrl }}
       (<strong>"Website"</strong>). It explains what these technologies are and why we use them, as
       well as your rights to control our use of them.
     </div>
@@ -210,15 +210,15 @@
 <script setup lang="ts">
 import { format } from 'date-fns';
 
-import type { PolicyCookie } from '../types';
+import type { PolicyCookie } from '../../types';
 import { config } from '@/../globals/config';
 import { openConsentPrefs } from '@/../datasources/termly/endpoints/consent';
-import { legalRoutes } from '../router';
+import { legalRoutes } from '../../router';
 
 definePageMeta(legalRoutes['cookie-policy']);
 
 const dateLastUpdate = new Date('2023-06-16');
-const publicUrlHost = new URL(config.publicUrl).host;
+const publicUrlHost = new URL(config.sitePublicUrl).host;
 
 const analyticsCookies = [
   {

@@ -51,7 +51,7 @@
     <div>
       <List type="ol" :items="tocList">
         <template #="{ item }">
-          <Linkable :to="`#${item.id}`">{{ item.title }}</Linkable>
+          <Linkable :to="getHashLink(item)">{{ item.title }}</Linkable>
         </template>
       </List>
     </div>
@@ -367,7 +367,7 @@ import { format } from 'date-fns';
 import mapValues from 'lodash/mapValues';
 
 import { config } from '@/../globals/config';
-import { legalRoutes } from '../router';
+import { legalRoutes } from '../../router';
 
 definePageMeta(legalRoutes['terms-of-use']);
 
@@ -395,8 +395,10 @@ const toc = {
   '18_misc': { title: '18. MISCELLANEOUS', id: 'misc' },
   '19_contact': { title: '19. CONTACT US', id: 'contact' },
 } satisfies Record<string, { title: string; id: string }>;
-const getTocItemLink = (item: { title: string; id: string }) => `#${item.id}`;
-const tocLinks = mapValues(toc, (item) => getTocItemLink(item));
+  const getHashLink = (item: { id: string }) => {
+  return { hash: `#${item.id}` };
+};
+const tocLinks = mapValues(toc, (item) => getHashLink(item));
 const tocList = Object.values(toc);
 </script>
 
