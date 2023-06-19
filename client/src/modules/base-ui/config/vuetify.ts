@@ -3,7 +3,7 @@ import { aliases as iconAliases, mdi } from 'vuetify/iconsets/mdi';
 
 import type { ComponentName } from '../types/components';
 
-const siteName = 'Yodese';
+const siteName = 'Example';
 
 const aliases = {
   // NOTE: Can't figure out yet how to use Vuetify aliases in Nuxt 3
@@ -39,7 +39,9 @@ const customDefaults = {
   //   size: 'x-large',
   //   rounded: '0',
   // },
-} satisfies Partial<Record<ComponentName | keyof typeof aliases, Record<string, unknown>>>;
+} satisfies Partial<
+  Record<ComponentName | keyof typeof aliases, Record<string, unknown>>
+>;
 
 /** Defaults for Vuetify components */
 const vuetifyDefaults = {
