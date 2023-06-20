@@ -1,25 +1,18 @@
 <template>
   <div class="Section" v-bind="$attrs">
-    <v-hover>
-      <template #="{ isHovering }">
-        <SectionTitle v-if="props.title" :id="kebabCase(props.title)">
-          <span v-if="isHovering"> # </span>
-          {{ props.title }}
-        </SectionTitle>
-      </template>
-    </v-hover>
+    <SectionTitle v-if="props.title" :id="id">
+      {{ props.title }}
+    </SectionTitle>
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-import kebabCase from 'lodash/kebabCase';
-
 defineOptions({
   inheritAttrs: false,
 });
 defineSlots<{ default: () => void }>();
-const props = defineProps<{ title?: string }>();
+const props = defineProps<{ title?: string; id?: string }>();
 </script>
 
 <style lang="scss">

@@ -18,9 +18,9 @@ const props = defineProps<{ tag?: string }>();
 <style lang="scss">
 .SubsectionTitle {
   h4 {
-    font-size: 1.5rem !important;
+    font-size: 1.3rem !important;
     font-weight: bold;
-    padding: 16px 20px 12px;
+    padding: 12px 12px 6px;
     background-color: #D2D8B1;
     color: #363636;
   }

@@ -9,7 +9,6 @@ export type ModalRendererOptions = {
 export interface LayoutNavItem<T extends string = string> {
   to: T;
   title: string;
-  hideOnMd?: boolean;
 }
 
 /** Main navigation item as used in a navigation drawer in DefaultLayout */

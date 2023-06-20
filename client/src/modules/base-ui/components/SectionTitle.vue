@@ -1,14 +1,16 @@
 <template>
-<h3 class="SectionTitle" v-bind="$attrs">
-  <slot />
-</h3>
+  <h3 class="SectionTitle">
+    <CLinkable :id="props.id">
+      <slot />
+    </CLinkable>
+  </h3>
 </template>
 
 <script setup lang="ts">
-defineOptions({
-  inheritAttrs: false,
-});
-defineSlots<{ default: () => void }>();
+defineSlots<{ default: (props: {}) => void }>();
+const props = defineProps<{
+  id?: string;
+}>();
 </script>
 
 <style lang="scss">
@@ -17,9 +19,8 @@ defineSlots<{ default: () => void }>();
   font-size: 2rem !important;
   line-height: 1.5;
   font-weight: 400;
-  padding: 4px 20px;
+  padding: 8px 20px 4px;
   background-color: #8FC4C7;
   color: white;
 }
 </style>
-  

@@ -33,6 +33,9 @@ const customDefaults = {
     color: '#1D2E54',
     colorHover: '#E75B5B',
   },
+  CLinkable: {
+    breakpoints: { md: 400 },
+  },
   // VBtnPrimary: {
   //   class: 'cta px-12',
   //   variant: 'flat',

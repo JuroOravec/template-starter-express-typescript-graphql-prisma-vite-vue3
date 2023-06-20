@@ -1,7 +1,7 @@
 <template>
   <v-layout
     class="DefaultLayout"
-    :class="{ md: display.width.value > 500, lg: display.width.value >= 750 }"
+    :class="classes"
   >
     <v-app-bar :elevation="0">
       <template v-slot:prepend>
@@ -28,7 +28,6 @@
               :to="item.to"
               class="nav-link"
               active-class="nav-link-active"
-              :class="{ 'nav-hide-md': item.hideOnMd }"
               tabindex="0"
             >
               {{ item.title }}
@@ -58,26 +57,26 @@
       </slot>
     </v-navigation-drawer>
 
-    <div style="max-width: 1300px; margin: auto">
-      <v-main style="height: 100vh; position: relative; display: flex; flex-direction: column">
+    <div style="max-width: min(1300px, 100vw); margin: auto">
+      <v-main style="min-height: 100vh; position: relative; display: flex; flex-direction: column">
         <v-container style="flex: auto">
           <slot v-bind="{ isDrawerOpen }" />
         </v-container>
-
-        <v-footer class="footer">
-          <slot name="footer-prepend" v-bind="{ isDrawerOpen }" />
-          <div class="px-4 py-2 bg-black text-center w-100">
-            {{ new Date().getFullYear() }} — <strong>{{ props.siteName }}</strong>
-          </div>
-          <slot name="footer-append" v-bind="{ isDrawerOpen }" />
-        </v-footer>
       </v-main>
     </div>
+    
+    <v-footer class="footer">
+      <slot name="footer-prepend" v-bind="{ isDrawerOpen }" />
+      <div class="px-4 py-2 bg-black text-center w-100">
+        {{ new Date().getFullYear() }} — <strong>{{ props.siteName }}</strong>
+      </div>
+      <slot name="footer-append" v-bind="{ isDrawerOpen }" />
+    </v-footer>
   </v-layout>
 </template>
 
 <script setup lang="ts" generic="TNav extends LayoutNavItem = LayoutNavItem">
-import { useDefaults, useDisplay } from 'vuetify';
+import { useDefaults } from 'vuetify';
 import type { ComponentPublicInstance } from 'vue';
 
 import type { LayoutNavItem, LayoutDrawerNavItem } from '../types';
@@ -102,7 +101,7 @@ const _props = defineProps<{
 const props = useDefaults(_props, 'DefaultLayout') as typeof _props;
 const { homeLink, nav } = toRefs(props);
 
-const display = useDisplay();
+const { classes, normalized } = useDisplayClasses({ md: 250, lg: 500 });
 
 const isDrawerOpen = ref(false);
 const navIcon = ref<ComponentPublicInstance | null>(null);
@@ -118,17 +117,24 @@ const closeDrawer = () => {
   isDrawerOpen.value = false;
 };
 
-watch(display.width, (newW) => {
-  if (newW >= 750 && isDrawerOpen.value) closeDrawer();
+watch(normalized.width, (newW) => {
+  if (newW >= 250 && isDrawerOpen.value) closeDrawer();
 });
 </script>
 
 <style lang="scss">
 .DefaultLayout {
+  flex-direction: column;
+  overflow-x: hidden;
+
   .nav {
     display: none;
     gap: 20px;
     padding: 0 16px;
+    // Hide overflow nav items, see https://stackoverflow.com/a/24300678/9788634
+    height: 31px;
+    flex-wrap: wrap;
+    overflow: hidden;
   }
 
   .nav-link {

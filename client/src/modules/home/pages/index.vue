@@ -1,10 +1,7 @@
 <template>
   <div
     class="HomePage"
-    :class="{
-      md: display.width.value > 550,
-      lg: display.width.value > 750,
-    }"
+    :class="classes"
   >
     <div class="global-sections">
       <Section title="Form">
@@ -57,14 +54,12 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify';
-
 import { homeRoutes } from '../router';
 import FormPriceEstimate from '../components/FormPriceEstimate.vue';
 
 definePageMeta(homeRoutes.home);
 
-const display = useDisplay();
+const { classes } = useDisplayClasses({ md: 550, lg: 750 });
 const router = useRouter();
 
 const howItWorksSteps = [

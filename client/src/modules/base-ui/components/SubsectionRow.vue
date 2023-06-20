@@ -1,7 +1,7 @@
 <template>
   <v-row
     class="SubsectionRow"
-    :class="{ wrap: props.wrap, reverse: props.reverse }"
+    :class="{ wrap, reverse, fullw: fullWidth }"
     v-bind="$attrs"
   >
     <slot />
@@ -15,8 +15,13 @@ defineOptions({
   inheritAttrs: false,
 });
 defineSlots<{ default: () => void }>();
-const _props = defineProps<{ wrap?: boolean; reverse?: boolean }>();
+const _props = defineProps<{
+  wrap?: boolean;
+  reverse?: boolean;
+  fullWidth?: boolean;
+}>();
 const props = useDefaults(_props) as typeof _props;
+const { wrap, reverse, fullWidth } = toRefs(props);
 </script>
 
 <style lang="scss">
@@ -34,6 +39,10 @@ const props = useDefaults(_props) as typeof _props;
 
   &.wrap {
     flex-direction: column;
+  }
+
+  &.fullw {
+    width: 100%;
   }
 }
 
