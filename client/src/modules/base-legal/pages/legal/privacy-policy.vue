@@ -8,11 +8,11 @@
     <div>
       This privacy notice for
       {{ config.legalCompanyName }}
-      (<Enum :items="['Company', 'we', 'us', 'our']" divider-last=" and ">
+      (<CEnum :items="['Company', 'we', 'us', 'our']" divider-last=" and ">
         <template #="{ item }">
           <strong>"{{ item }}"</strong>
         </template>
-      </Enum>),
+      </CEnum>),
       describes how and why we might collect, store, use, and/or share
       (<strong>"process"</strong>)
       your information when you use our services
@@ -21,7 +21,7 @@
 
       <ul class="global-list">
         <li>
-          Visit our website at <Linkable :to="config.sitePublicUrl" />, or any website of ours that
+          Visit our website at <CLink :to="config.sitePublicUrl" />, or any website of ours that
           links to this privacy notice
         </li>
         <li>
@@ -45,7 +45,7 @@
         This summary provides key points from our privacy notice, but you can find out more
         details about any of these topics by clicking the link following each key point or
         by using our
-        <Linkable :to="getHashLink({ id: 'toc' })">table of contents</Linkable>
+        <CLink :to="getHashLink({ id: 'toc' })">table of contents</CLink>
         below to find the section you are looking for.
       </strong>
     </div>
@@ -57,7 +57,7 @@
       {{ config.legalCompanyName }}
       and the Services, the choices you make, and the products and features you use.
       Learn more about
-      <Linkable :to="getHashLink({ id: 'personalinfo' })">personal information you disclose to us</Linkable>.
+      <CLink :to="getHashLink({ id: 'personalinfo' })">personal information you disclose to us</CLink>.
     </div>
 
     <div>
@@ -76,14 +76,14 @@
       with you, for security and fraud prevention, and to comply with law. We may also process
       your information for other purposes with your consent. We process your information only
       when we have a valid legal reason to do so. Learn more about
-      <Linkable :to="tocLinks['2_process']">how we process your information</Linkable>.
+      <CLink :to="tocLinks['2_process']">how we process your information</CLink>.
     </div>
 
     <div>
       <strong>In what situations and with which parties do we share personal information?</strong>
       We may share information in specific situations and with specific third parties. Learn more
       about
-      <Linkable :to="tocLinks['4_share']">when and with whom we share your personal information</Linkable>.
+      <CLink :to="tocLinks['4_share']">when and with whom we share your personal information</CLink>.
     </div>
 
     <div>
@@ -94,14 +94,14 @@
       that hackers, cybercriminals, or other unauthorized third parties will not be able to defeat
       our security and improperly collect, access, steal, or modify your information. Learn more
       about
-      <Linkable :to="tocLinks['9_safety']">how we keep your information safe</Linkable>.
+      <CLink :to="tocLinks['9_safety']">how we keep your information safe</CLink>.
     </div>
 
     <div>
       <strong>What are your rights?</strong>
       Depending on where you are located geographically, the applicable privacy law may mean you
       have certain rights regarding your personal information. Learn more about
-      <Linkable :to="tocLinks['11_rights']">your privacy rights</Linkable>.
+      <CLink :to="tocLinks['11_rights']">your privacy rights</CLink>.
     </div>
 
     <div>
@@ -112,16 +112,16 @@
 
     <div>
       Want to learn more about what {{ config.legalCompanyName }} does with any information we collect?
-      <Linkable :to="getHashLink({ id: 'toc' })">Review the privacy notice in full</Linkable>.
+      <CLink :to="getHashLink({ id: 'toc' })">Review the privacy notice in full</CLink>.
     </div>
 
     <h2 id="toc" class="text-h4">TABLE FO CONTENTS</h2>
     <div>
-      <List type="ol" :items="tocList">
+      <CList type="ol" :items="tocList">
         <template #="{ item }">
-          <Linkable :to="getHashLink(item)">{{ item.title }}</Linkable>
+          <CLink :to="getHashLink(item)">{{ item.title }}</CLink>
         </template>
-      </List>
+      </CList>
     </div>
 
     <h2 :id="toc['1_collect'].id" class="text-h4">{{ toc['1_collect'].title }}</h2>
@@ -148,7 +148,7 @@
        us and the Services, the choices you make, and the products and features you use.
        The personal information we collect may include the following:
 
-       <List :items="collectedPII" />
+       <CList :items="collectedPII" />
     </div>
 
     <div>
@@ -161,11 +161,11 @@
       We may collect data necessary to process your payment if you make purchases, such as your
       payment instrument number, and the security code associated with your payment instrument.
       Payment data is stored by:
-      <List :items="paymentProviders">
+      <CList :items="paymentProviders">
         <template #="{ item }">
-          <Linkable :to="item.privacyPolicyUrl">{{ item.name }}</Linkable>
+          <CLink :to="item.privacyPolicyUrl">{{ item.name }}</CLink>
         </template>
-      </List>
+      </CList>
     </div>
 
     <div>
@@ -173,7 +173,7 @@
       We may provide you with the option to register with us using your existing social media
       account details, like your Facebook, Twitter, or other social media account. If you choose
       to register in this way, we will collect the information described in the section called
-      <Linkable :to="tocLinks['7_social']">{{ toc['7_social'].title }}</Linkable>
+      <CLink :to="tocLinks['7_social']">{{ toc['7_social'].title }}</CLink>
       below.
     </div>
 
@@ -205,7 +205,7 @@
     <div>
       Like many businesses, we also collect information through cookies and similar technologies.
       You can find out more about this in our Cookie Notice:
-      <Linkable :to="cookiePolicyUrl" />
+      <CLink :to="cookiePolicyUrl" />
     </div>
 
     <div>
@@ -312,7 +312,7 @@
           We may process the personal information you send to us for our marketing purposes, if
           this is in accordance with your marketing preferences. You can opt out of our marketing
           emails at any time. For more information, see
-          <Linkable :to="tocLinks['11_rights']">{{ toc['11_rights'].title }}</Linkable>
+          <CLink :to="tocLinks['11_rights']">{{ toc['11_rights'].title }}</CLink>
           below.
         </li>
 
@@ -323,7 +323,7 @@
           We may process your information to develop and display personalized content and
           advertising tailored to your interests, location, and more. For more information see our
           Cookie Notice:
-          <Linkable :to="cookiePolicyUrl" />
+          <CLink :to="cookiePolicyUrl" />
         </li>
 
         <li>
@@ -382,7 +382,7 @@
           We may process your information if you have given us permission (i.e., consent)
           to use your personal information for a specific purpose. You can withdraw your
           consent at any time. Learn more about
-          <Linkable :to="getHashLink({ id: 'withdrawconsent' })">withdrawing your consent</Linkable>.
+          <CLink :to="getHashLink({ id: 'withdrawconsent' })">withdrawing your consent</CLink>.
         </li>
 
         <li>
@@ -398,7 +398,7 @@
           </strong>
           We may process your information when we believe it is reasonably necessary to achieve our legitimate business interests and those interests do not outweigh your interests and fundamental rights and freedoms. For example, we may process your personal information for some of the purposes described in order to:
 
-          <List :items="[
+          <CList :items="[
             'Send users information about special offers and discounts on our products and services',
             'Develop and display personalized and relevant advertising content for our users',
             'Analyze how our Services are used so we can improve them to engage and retain users',
@@ -434,14 +434,14 @@
       We may process your information if you have given us specific permission (i.e., express
       consent) to use your personal information for a specific purpose, or in situations where your
       permission can be inferred (i.e., implied consent). You can
-      <Linkable :to="getHashLink({ id: 'withdrawconsent' })">withdraw your consent</Linkable>
+      <CLink :to="getHashLink({ id: 'withdrawconsent' })">withdraw your consent</CLink>
       at any time.
     </div>
 
     <div>
       In some exceptional cases, we may be legally permitted under applicable law to process your information without your consent, including, for example:
       
-      <List :items="[
+      <CList :items="[
         'If collection is clearly in the interests of an individual and consent cannot be obtained in a timely way',
         'For investigations and fraud detection and prevention',
         'For business transactions provided certain conditions are met',
@@ -485,14 +485,14 @@
           to retrieve certain information when you make location-specific requests.
           A full list of what we use information for can be found in this section and in
           the previous section titled
-          <Linkable :to="tocLinks['2_process']">{{ toc['2_process'].title }}</Linkable>.
+          <CLink :to="tocLinks['2_process']">{{ toc['2_process'].title }}</CLink>.
           We obtain and store on your device ("cache") your location. You may revoke your consent
           anytime by contacting us at the contact details provided at the end of this document.
           The Google Maps Platform APIs that we use store and access cookies and other information
           on your devices. If you are a user currently in the European Economic Area (EU countries,
           Iceland, Liechtenstein, and Norway) or the United Kingdom, please take a look at our Cookie
           Notice, which can be found at this link:
-          <Linkable :to="cookiePolicyUrl" />.
+          <CLink :to="cookiePolicyUrl" />.
         </li>
 
         <li>
@@ -538,7 +538,7 @@
       We may use cookies and similar tracking technologies (like web beacons and pixels) to access
       or store information. Specific information about how we use such technologies and how you
       can refuse certain cookies is set out in our Cookie Notice:
-      <Linkable :to="cookiePolicyUrl" />.
+      <CLink :to="cookiePolicyUrl" />.
     </div>
 
     <h2 :id="toc['7_social'].id" class="text-h4">{{ toc['7_social'].title }}</h2>
@@ -624,7 +624,7 @@
       In certain circumstances, you may also have the right to object to the processing of your
       personal information. You can make such a request by contacting us by using the contact
       details provided in the section
-      <Linkable :to="tocLinks['16_contact']"> {{ toc['16_contact'].title }} </Linkable>
+      <CLink :to="tocLinks['16_contact']"> {{ toc['16_contact'].title }} </CLink>
       below.
     </div>
 
@@ -635,20 +635,20 @@
     <div>
       If you are located in the EEA or UK and you believe we are unlawfully processing your
       personal information, you also have the right to complain to your
-      <Linkable to="https://ec.europa.eu/justice/data-protection/bodies/authorities/index_en.htm">
+      <CLink to="https://ec.europa.eu/justice/data-protection/bodies/authorities/index_en.htm">
         Member State data protection authority
-      </Linkable>
+      </CLink>
       or
-      <Linkable to="https://ico.org.uk/make-a-complaint/data-protection-complaints/data-protection-complaints/">
+      <CLink to="https://ico.org.uk/make-a-complaint/data-protection-complaints/data-protection-complaints/">
         UK data protection authority
-      </Linkable>.
+      </CLink>.
     </div>
 
     <div>
       If you are located in Switzerland, you may contact the
-      <Linkable to="https://www.edoeb.admin.ch/edoeb/en/home.html">
+      <CLink to="https://www.edoeb.admin.ch/edoeb/en/home.html">
         Federal Data Protection and Information Commissioner
-      </Linkable>.
+      </CLink>.
     </div>
 
     <div id="withdrawconsent">
@@ -657,7 +657,7 @@
       and/or implied consent depending on the applicable law, you have the right to withdraw your
       consent at any time. You can withdraw your consent at any time by contacting us by using
       the contact details provided in the section
-      <Linkable :to="tocLinks['16_contact']"> {{ toc['16_contact'].title }} </Linkable>
+      <CLink :to="tocLinks['16_contact']"> {{ toc['16_contact'].title }} </CLink>
       below or updating your preferences.
     </div>
 
@@ -670,7 +670,7 @@
       You can unsubscribe from our marketing and promotional communications at any time by clicking
       on the unsubscribe link in the emails that we send, or by contacting us using the details
       provided in the section
-      <Linkable :to="tocLinks['16_contact']"> {{ toc['16_contact'].title }} </Linkable>
+      <CLink :to="tocLinks['16_contact']"> {{ toc['16_contact'].title }} </CLink>
       below. You will then be removed from the marketing lists. However, we may still communicate
       with you — for example, to send you service-related messages that are necessary for
       the administration and use of your account, to respond to service requests, or for other
@@ -682,7 +682,7 @@
     <div>
       If you would at any time like to review or change the information in your account or terminate your account, you can:
 
-      <List :items="[
+      <CList :items="[
         'Contact us using the contact information provided.',
         'Log in to your account settings and update your user account.',
       ]"/>
@@ -698,11 +698,11 @@
       choose to set your browser to remove cookies and to reject cookies. If you choose to remove
       cookies or reject cookies, this could affect certain features or services of our Services.
       You may also
-      <Linkable to="http://www.aboutads.info/choices/">
+      <CLink to="http://www.aboutads.info/choices/">
         opt out of interest-based advertising by advertisers
-      </Linkable>
+      </CLink>
       on our Services. For further information, please see our Cookie Notice:
-      <Linkable :to="cookiePolicyUrl" />.
+      <CLink :to="cookiePolicyUrl" />.
     </div>
 
     <div>
@@ -738,7 +738,7 @@
     <div>
       The California Code of Regulations defines a "resident" as:
 
-      <List :items="[
+      <CList :items="[
         '(1) every individual who is in the State of California for other than a temporary or transitory purpose and',
         '(2) every individual who is domiciled in the State of California who is outside the State of California for a temporary or transitory purpose'
       ]" />
@@ -786,7 +786,7 @@
     <div>
       We may also collect other personal information outside of these categories through instances where you interact with us in person, online, or by phone or mail in the context of:
 
-      <List :items="[
+      <CList :items="[
         'Receiving help through our customer support channels;',
         'Participation in customer surveys or contests; and',
         'Facilitation in the delivery of our Services and to respond to your inquiries.'
@@ -803,7 +803,7 @@
     <div>
       More information about our data collection and sharing practices can be found in this
       privacy notice and our Cookie Notice:
-      <Linkable :to="cookiePolicyUrl" />.
+      <CLink :to="cookiePolicyUrl" />.
     </div>
 
     <div>
@@ -859,7 +859,7 @@
           <strong>Right to be informed — Request to know:</strong>
           Depending on the circumstances, you have a right to know:
 
-          <List :items="[
+          <CList :items="[
             'whether we collect and use your personal information;',
             'the categories of personal information that we collect;',
             'the purposes for which the collected personal information is used;',
@@ -895,7 +895,7 @@
 
         <li>
           <strong>Other privacy rights:</strong>
-          <List :items="[
+          <CList :items="[
             'You may object to the processing of your personal information.',
             'You may request correction of your personal data if it is incorrect or no longer relevant, or ask to restrict the processing of the information.',
             'You can designate an authorized agent to make a request under the CCPA on your behalf. We may deny a request from an authorized agent that does not submit proof that they have been validly authorized to act on your behalf in accordance with the CCPA.',
@@ -950,20 +950,20 @@
 
       <ul class="global-list">
         <li>
-          <Linkable :to="tocLinks['1_collect']">{{ toc['1_collect'].title }}</Linkable>
+          <CLink :to="tocLinks['1_collect']">{{ toc['1_collect'].title }}</CLink>
         </li>
         <li>
-          <Linkable :to="tocLinks['2_process']">{{ toc['2_process'].title }}</Linkable>
+          <CLink :to="tocLinks['2_process']">{{ toc['2_process'].title }}</CLink>
         </li>
         <li>
-          <Linkable :to="tocLinks['4_share']">{{ toc['4_share'].title }}</Linkable>
+          <CLink :to="tocLinks['4_share']">{{ toc['4_share'].title }}</CLink>
         </li>
       </ul>
     </div>
 
     <div>
       <strong>Your rights with respect to your personal data: </strong>
-      <List :items="[
+      <CList :items="[
         'Right to be informed whether or not we are processing your personal data',
         'Right to access your personal data',
         'Right to correct inaccuracies in your personal data',
@@ -984,7 +984,7 @@
     <div>
       More information about our data collection and sharing practices can be found in this
       privacy notice and our Cookie Notice:
-      <Linkable :to="cookiePolicyUrl" />.
+      <CLink :to="cookiePolicyUrl" />.
     </div> 
 
     <div>
@@ -1048,9 +1048,9 @@
       or contact us by post at:
       <br/>
       <br/>
-      <Enum :items="config.legalAddress">
+      <CEnum :items="config.legalAddress">
         <template #divider>,<br/></template>
-      </Enum>
+      </CEnum>
     </div> 
 
     <h2 :id="toc['17_request'].id" class="text-h4">{{ toc['17_request'].title }}</h2>
@@ -1068,8 +1068,8 @@
 
     <!-- <div>
       This privacy policy was created using Termly's
-      <Linkable to="https://termly.io/products/privacy-policy-generator/">
-        Cookie Consent Manager </Linkable
+      <CLink to="https://termly.io/products/privacy-policy-generator/">
+        Cookie Consent Manager </CLink
       >.
     </div> -->
   </div>

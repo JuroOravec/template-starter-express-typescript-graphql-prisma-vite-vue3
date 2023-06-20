@@ -7,11 +7,11 @@
       <template v-slot:prepend>
         <div class="pl-4 d-flex align-center" style="gap: 20px">
           <v-app-bar-title class="pt-1">
-            <Linkable :to="homeLink">
+            <CLink :to="homeLink">
               <slot name="logo" v-bind="{ isDrawerOpen }">
                 {{ siteName }}
               </slot>
-            </Linkable>
+            </CLink>
           </v-app-bar-title>
           <v-app-bar-nav-icon
             ref="navIcon"
@@ -24,7 +24,7 @@
       <div class="nav">
         <template v-for="item in nav">
           <slot name="nav-item" v-bind="{ item, isDrawerOpen }">
-            <Linkable
+            <CLink
               :to="item.to"
               class="nav-link"
               active-class="nav-link-active"
@@ -32,7 +32,7 @@
               tabindex="0"
             >
               {{ item.title }}
-            </Linkable>
+            </CLink>
           </slot>
         </template>
       </div>

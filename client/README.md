@@ -110,7 +110,7 @@ the Nuxt project structure. See https://nuxt.com/docs/guide/directory-structure.
 
 ### Vue components
 
-See [./src/modules/base/components/Linkable.vue](./src/modules/base/components/Linkable.vue)
+See [./src/modules/base/components/CLink.vue](./src/modules/base/components/CLink.vue)
 as the example of writing [Vue 3 Components with setup script](https://vuejs.org/api/sfc-script-setup.html).
 
 ### Developer tooling (DX)

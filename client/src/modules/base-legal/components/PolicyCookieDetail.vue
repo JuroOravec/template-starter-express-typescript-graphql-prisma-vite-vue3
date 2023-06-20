@@ -7,7 +7,7 @@
           {{ val.name }}
   
           <template v-if="val.policyUrl">
-            (<Linkable :to="val.policyUrl">View Service Privacy Policy</Linkable>)
+            (<CLink :to="val.policyUrl">View Service Privacy Policy</CLink>)
           </template>
         </td>
         <td v-else>

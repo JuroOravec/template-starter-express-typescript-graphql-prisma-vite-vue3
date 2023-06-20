@@ -21,13 +21,13 @@ const customDefaults = {
     wrap: true,
     reverse: false,
   },
-  List: {
+  CList: {
     type: 'ul',
   },
-  Enum: {
+  CEnum: {
     divider: ', ',
   },
-  Linkable: {
+  CLink: {
     openInNewTab: 'external',
     underline: true,
     color: '#1D2E54',

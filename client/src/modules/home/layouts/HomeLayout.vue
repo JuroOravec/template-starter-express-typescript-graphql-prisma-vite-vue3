@@ -12,9 +12,9 @@
     <template #footer-prepend>
       <div style="background-color: black; color: white; width: 100%;">
         <div class="d-flex text-caption justify-center pt-2" style="gap: 16px;">
-          <Linkable v-for="item in footerLegal" :key="item.title" color="white" :to="item.link" :underline="false" @click="item.onClick">
+          <CLink v-for="item in footerLegal" :key="item.title" color="white" :to="item.link" :underline="false" @click="item.onClick">
             {{ item.title }}
-          </Linkable>
+          </CLink>
         </div>
       </div>
     </template>

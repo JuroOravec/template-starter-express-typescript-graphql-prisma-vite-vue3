@@ -8,11 +8,11 @@
     <div>
       This Cookie Policy explains how
       {{ config.legalCompanyName }}
-      (<Enum :items="['Company', 'we', 'us', 'our']" divider-last=" and ">
+      (<CEnum :items="['Company', 'we', 'us', 'our']" divider-last=" and ">
         <template #="{ item }">
           <strong>"{{ item }}"</strong>
         </template>
-      </Enum>)
+      </CEnum>)
       uses cookies and similar technologies to recognize you when you
       visit our website at
       {{ config.sitePublicUrl }}
@@ -53,7 +53,7 @@
     <div>
       You have the right to decide whether to accept or reject cookies. You can exercise your cookie
       rights by setting your preferences in the
-      <Linkable @click="openConsentPrefs">Cookie Consent Manager</Linkable>.
+      <CLink @click="openConsentPrefs">Cookie Consent Manager</CLink>.
       The Cookie Consent Manager
       allows you to select which categories of cookies you accept or reject. Essential cookies
       cannot be rejected as they are strictly necessary to provide you with services.
@@ -99,20 +99,20 @@
       browser to browser, you should visit your browser's help menu for more information. The
       following is information about how to manage cookies on the most popular browsers:
     </div>
-    <List :items="browserUrls">
+    <CList :items="browserUrls">
       <template #="{ item }">
-        <Linkable :to="item.url">{{ item.name }}</Linkable>
+        <CLink :to="item.url">{{ item.name }}</CLink>
       </template>
-    </List>
+    </CList>
     <div>
       In addition, most advertising networks offer you a way to opt out of targeted advertising. If
       you would like to find out more information, please visit:
     </div>
-    <List :items="adNetworks">
+    <CList :items="adNetworks">
       <template #="{ item }">
-        <Linkable :to="item.url">{{ item.name }}</Linkable>
+        <CLink :to="item.url">{{ item.name }}</CLink>
       </template>
-    </List>
+    </CList>
 
     <h3 class="text-h6">What about other tracking technologies, like web beacons?</h3>
     <div>
@@ -137,16 +137,16 @@
     <div>
       If you do not want Flash Cookies stored on your computer, you can adjust the settings of your
       Flash player to block Flash Cookies storage using the tools contained in the
-      <Linkable
+      <CLink
         to="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager07.html"
       >
-        Website Storage Settings Panel </Linkable
+        Website Storage Settings Panel </CLink
       >. You can also control Flash Cookies by going to the
-      <Linkable
+      <CLink
         to="http://www.macromedia.com/support/documentation/en/flashplayer/help/settings_manager03.html"
       >
         Global Storage Settings Panel
-      </Linkable>
+      </CLink>
       and following the instructions (which may include instructions that explain, for example, how
       to delete existing Flash Cookies (referred to "information" on the Macromedia site), how to
       prevent Flash LSOs from being placed on your computer without your being asked, and (for Flash
@@ -193,15 +193,15 @@
       or by post to:
       <br/>
       <br/>
-      <Enum :items="config.legalAddress">
+      <CEnum :items="config.legalAddress">
         <template #divider>,<br/></template>
-      </Enum>
+      </CEnum>
     </div>
 
     <!-- <div>
       This cookie policy was created using Termly's
-      <Linkable to="https://termly.io/products/cookie-consent-manager/">
-        Cookie Consent Manager </Linkable
+      <CLink to="https://termly.io/products/cookie-consent-manager/">
+        Cookie Consent Manager </CLink
       >.
     </div> -->
   </div>

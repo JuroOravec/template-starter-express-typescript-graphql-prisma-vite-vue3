@@ -11,11 +11,11 @@
     <div>
       We are
       {{ config.legalCompanyName }}
-      (<Enum :items="['Company', 'we', 'us', 'our']">
+      (<CEnum :items="['Company', 'we', 'us', 'our']">
         <template #="{ item }">
           <strong>"{{ item }}"</strong>
         </template>
-      </Enum>)
+      </CEnum>)
 
     </div>
     <div>
@@ -49,11 +49,11 @@
 
     <h2 id="toc" class="text-h4">TABLE FO CONTENTS</h2>
     <div>
-      <List type="ol" :items="tocList">
+      <CList type="ol" :items="tocList">
         <template #="{ item }">
-          <Linkable :to="getHashLink(item)">{{ item.title }}</Linkable>
+          <CLink :to="getHashLink(item)">{{ item.title }}</CLink>
         </template>
-      </List>
+      </CList>
     </div>
 
     <h2 :id="toc['1_services'].id" class="text-h4">{{ toc['1_services'].title }}</h2>
@@ -82,9 +82,9 @@
 
     <div>
       Subject to your compliance with these Legal Terms, including the
-      <Linkable :to="tocLinks['4_prohibited']">{{ toc['4_prohibited'].title }}</Linkable>
+      <CLink :to="tocLinks['4_prohibited']">{{ toc['4_prohibited'].title }}</CLink>
       section below, we grant you a non-exclusive, non-transferable, revocable license to:
-      <List :items="[
+      <CList :items="[
         'access the Services; and',
         'download or print a copy of any portion of the Content to which you have properly gained access.',
       ]" />
@@ -117,7 +117,7 @@
 
     <div>
       Please review this section and the
-      <Linkable :to="tocLinks['4_prohibited']">{{ toc['4_prohibited'].title }}</Linkable>
+      <CLink :to="tocLinks['4_prohibited']">{{ toc['4_prohibited'].title }}</CLink>
       section carefully prior to using our Services to understand the (a) rights you give us and (b) obligations you have when you post or upload any content through the Services.
     </div>
     
@@ -133,7 +133,7 @@
       <ul>
         <li>
           confirm that you have read and agree with our
-          <Linkable :to="tocLinks['4_prohibited']">{{ toc['4_prohibited'].title }}</Linkable>
+          <CLink :to="tocLinks['4_prohibited']">{{ toc['4_prohibited'].title }}</CLink>
           and will not post, send, publish, upload, or transmit through the Services any
           Submission that is illegal, harassing, hateful, harmful, defamatory, obscene, bullying,
           abusive, discriminatory, threatening to any person or group, sexually explicit, false,
@@ -170,7 +170,7 @@
 
     <div>
       As a user of the Services, you agree not to:
-      <List :items="[
+      <CList :items="[
         'Systematically retrieve data or other content from the Services to create or compile, directly or indirectly, a collection, compilation, database, or directory without written permission from us.',
         'Trick, defraud, or mislead us and other users, especially in any attempt to learn sensitive account information such as user passwords.',
         'Circumvent, disable, or otherwise interfere with security-related features of the Services, including features that prevent or restrict the use or copying of any Content or enforce limitations on the use of the Services and/or the Content contained therein.',
@@ -348,15 +348,15 @@
       or by post to:
       <br/>
       <br/>
-      <Enum :items="config.legalAddress">
+      <CEnum :items="config.legalAddress">
         <template #divider>,<br/></template>
-      </Enum>
+      </CEnum>
     </div>
 
     <!-- <div>
       This cookie policy was created using Termly's
-      <Linkable to="https://termly.io/products/terms-and-conditions-generator/">
-        Terms and Conditions Generator </Linkable
+      <CLink to="https://termly.io/products/terms-and-conditions-generator/">
+        Terms and Conditions Generator </CLink
       >.
     </div> -->
   </div>

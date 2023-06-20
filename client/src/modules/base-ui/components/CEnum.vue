@@ -1,5 +1,5 @@
 <template>
-  <span class="Enum" v-bind="$attrs">
+  <span class="CEnum" v-bind="$attrs">
     <template v-for="(item, index) in items" :key="item">
       <slot name="item" v-bind="genSlotScope(item, index)">
         <span>
@@ -44,6 +44,6 @@ const genSlotScope = (item: T, idx: number) => ({ item, divider: getItemDivider(
 </script>
 
 <style lang="scss">
-.Enum {
+.CEnum {
 }
 </style>

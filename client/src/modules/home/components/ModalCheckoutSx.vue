@@ -14,7 +14,7 @@
       </div>
       <div>
         Now it's up to you to decide which scraper to give this to. When you're ready, head over to the
-        <Linkable to="/scrapers">scrapers suggestions section.</Linkable>
+        <CLink to="/scrapers">scrapers suggestions section.</CLink>
       </div>
       <VBtnSecondary class="mx-auto my-4" @click="() => emit('done')">
         Dismiss

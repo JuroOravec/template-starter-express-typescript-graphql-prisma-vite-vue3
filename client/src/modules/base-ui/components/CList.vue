@@ -1,5 +1,5 @@
 <template>
-  <component :is="listComponent" class="List global-list" v-bind="$attrs">
+  <component :is="listComponent" class="CList global-list" v-bind="$attrs">
     <template v-for="item in items" :key="item">
       <slot name="item" v-bind="{ item }">
         <li>
@@ -27,6 +27,6 @@ const listComponent = computed(() => props.type);
 </script>
 
 <style lang="scss">
-.List {
+.CList {
 }
 </style>

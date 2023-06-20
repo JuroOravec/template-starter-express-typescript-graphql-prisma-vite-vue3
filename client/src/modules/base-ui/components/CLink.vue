@@ -2,7 +2,7 @@
   <NuxtLink
     v-bind="{ ...$attrs, ...nuxtProps }"
     :target="willOpenInNewTab ? '_blank' : undefined"
-    class="Linkable"
+    class="CLink"
     :class="{ underline }"
   >
     <slot>
@@ -54,28 +54,28 @@
 </script>
 
 <style lang="scss">
-.Linkable {
+.CLink {
   $self: &; // See https://css-tricks.com/using-sass-control-scope-bem-naming/ // TODO MOVE
 
-  --linkable-color: v-bind(color);
-  --linkable-color-hover: v-bind(colorHover);
+  --clinklor: v-bind(color);
+  --clink-color-hover: v-bind(colorHover);
 
   font-weight: 500;
-  color: var(--linkable-color);
+  color: var(--clink-color);
   padding-bottom: 2px;
   text-decoration: none;
   cursor: pointer;
 
   &.underline {
-    border-bottom: 1px dashed var(--linkable-color);
+    border-bottom: 1px dashed var(--clink-color);
   }
   
   &:hover {
-    color: var(--linkable-color-hover);
-    border-bottom-color: var(--linkable-color-hover);
+    color: var(--clink-color-hover);
+    border-bottom-color: var(--clink-color-hover);
 
     .v-icon {
-      color: var(--linkable-color-hover) !important;
+      color: var(--clink-color-hover) !important;
     }
   }
 }
