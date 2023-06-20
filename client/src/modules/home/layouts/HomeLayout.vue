@@ -4,7 +4,7 @@
     :nav="nav"
   >
     <template #logo>
-      THE LOGO
+      <strong style="font-size: 28px;">{{ config.siteName }}</strong>
     </template>
     <template #default>
       <slot />
@@ -23,6 +23,7 @@
 
 <script setup lang="ts">
 import { openConsentPrefs } from '@/../datasources/termly/endpoints/consent';
+import { config } from '@/../globals/config';
 import type { LayoutNavItem } from '../../base-ui/types';
 import DefaultLayout from '../../base-ui/layouts/DefaultLayout.vue';
 import { homeRoutes } from '../router';
@@ -30,7 +31,7 @@ import { legalRoutes } from '../../base-legal/router';
 
 const nav = [
   { to: homeRoutes.pricing.path, title: 'Pricing' },
-  { to: homeRoutes.about.path, title: 'About Us', hideOnMd: true },
+  { to: homeRoutes.about.path, title: 'About Us' },
 ] satisfies LayoutNavItem[];
 
 const footerLegal = [

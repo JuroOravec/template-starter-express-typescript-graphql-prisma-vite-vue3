@@ -8,8 +8,9 @@ export enum AppEnv {
 }
 
 interface Config {
+  siteName: string;
   /** Public URL where this frontend app can be accessed */
-  publicUrl: string;
+  sitePublicUrl: string;
   apolloUrl: string;
   apolloEnableDebug: boolean;
   analyticsUrl: string;
@@ -42,7 +43,8 @@ const legal = {
  */
 const configs = Object.freeze({
   dev: {
-    publicUrl: 'https://example.com',
+    siteName: 'Example Site',
+    sitePublicUrl: 'https://example.com',
     apolloUrl: 'http://localhost:3000/graphql',
     apolloEnableDebug: true,
     analyticsUrl: 'https://localhost:3000/_t/a/m',
@@ -54,7 +56,8 @@ const configs = Object.freeze({
     ...legal,
   },
   prd: {
-    publicUrl: 'https://example.com',
+    siteName: 'Example Site',
+    sitePublicUrl: 'https://example.com',
     apolloUrl: 'https://api.example.com/graphql',
     apolloEnableDebug: false,
     analyticsUrl: 'https://api.example.com/_t/a/m',
@@ -74,7 +77,8 @@ const configs = Object.freeze({
 
 /** Validation for the configs. */
 const configValidationSchema = Joi.object<Config>({
-  publicUrl: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).required(), // prettier-ignore
+  siteName: Joi.string().min(1).required(), // prettier-ignore
+  sitePublicUrl: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).required(), // prettier-ignore
   apolloUrl: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).required(), // prettier-ignore
   apolloEnableDebug: Joi.boolean(),
   analyticsUrl: Joi.string().min(1).uri({ scheme: ['http', 'https'] }).required(), // prettier-ignore

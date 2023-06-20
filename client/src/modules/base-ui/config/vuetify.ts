@@ -1,9 +1,8 @@
 import type { VuetifyOptions } from 'vuetify';
 import { aliases as iconAliases, mdi } from 'vuetify/iconsets/mdi';
 
+import { config } from '../../../globals/config';
 import type { ComponentName } from '../types/components';
-
-const siteName = 'Example';
 
 const aliases = {
   // NOTE: Can't figure out yet how to use Vuetify aliases in Nuxt 3
@@ -14,7 +13,7 @@ const aliases = {
 /** Defaults for our own components */
 const customDefaults = {
   DefaultLayout: {
-    siteName,
+    siteName: config.siteName,
     homeLink: '/',
   },
   SubsectionRow: {

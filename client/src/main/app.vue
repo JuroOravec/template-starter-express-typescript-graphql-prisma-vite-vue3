@@ -10,6 +10,7 @@
 <script setup lang="ts">
 import { provideApolloClients } from '@vue/apollo-composable';
 
+import { config } from '@/../globals/config';
 import { useJobs } from '../lib/jobs';
 import { homeJobs } from '../modules/home/jobs';
 import { useHomeModal } from '../modules/home/composables/useHomeModal';
@@ -24,7 +25,7 @@ const modal = useHomeModal();
 
 // See https://nuxt.com/docs/migration/meta/#migration
 useHead({
-  title: 'Example web',
+  title: config.siteName,
   link: [
     // See how to add fonts https://reactgo.com/nuxt-add-fonts/
     {

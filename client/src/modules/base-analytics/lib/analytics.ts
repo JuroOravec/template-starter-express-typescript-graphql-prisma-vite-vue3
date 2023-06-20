@@ -22,7 +22,7 @@ export const createAnalyticsInstance = (): CustomAnalyticsInstance => {
   const mixpanelPlugin = createMixpanelPlugin(
     config.analyticsMixpanelToken ?? '',
     {
-      opt_out_tracking_cookie_prefix: 'yodese',
+      opt_out_tracking_cookie_prefix: config.siteName,
       api_host: config.analyticsUrl,
     },
   );
