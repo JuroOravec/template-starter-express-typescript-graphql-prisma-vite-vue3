@@ -3,8 +3,8 @@ import type { Component } from 'vue';
 import { createNamedUseComponentQueue } from '@/../lib/componentQueue';
 import type { ModalRendererOptions } from '@/../modules/base-ui/types';
 import type { PaddleCheckoutSuccessEvent } from '@/../datasources/paddle/types';
-import ModalCheckoutSx from '../components/ModalCheckoutSx.vue';
-import ModalCheckoutFail from '../components/ModalCheckoutFail.vue';
+import ModalCheckoutSx from '../../components/ModalCheckoutSx.vue';
+import ModalCheckoutFail from '../../components/ModalCheckoutFail.vue';
 import ModalMfaFail from '../../components/ModalMfaFail.vue';
 
 /** Input / output of all modals used in the home module */
