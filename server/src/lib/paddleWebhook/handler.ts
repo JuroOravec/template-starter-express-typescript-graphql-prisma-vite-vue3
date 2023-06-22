@@ -4,6 +4,7 @@ import createHttpError from 'http-errors';
 import { verifyPaddleWebhook } from './utils';
 import type { PaddleWebhookPayload } from '../../datasources/paddle/types';
 import type { PaddleEvent, PaddleEventHandler } from './types';
+import { logger } from '@/globals/logger';
 
 // https://developer.paddle.com/webhook-reference/d8bbc4ae5cefa-security#ip-allowlisting
 export const PADDLE_IPS = [
@@ -56,8 +57,9 @@ export const createPaddleWebhookHandler = (input: {
       // Individual event handlers should define response.
       // https://developer.paddle.com/webhook-reference/bd1986c817a40-webhook-reference#responding-to-events
       await eventHandler(req, res, payload);
-    } catch (err) {
-      next(err);
+    } catch (error) {
+      logger.error({ error }, 'Error while processing Paddle webhook event.');
+      next(error);
     }
   };
 

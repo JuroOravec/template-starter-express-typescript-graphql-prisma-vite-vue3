@@ -24,6 +24,16 @@
    - <https://developer.paddle.com/api-reference/8eb39cf89a1ff-product-api>
    - <https://developer.paddle.com/api-reference/0f31bd7cbce47-list-products>
 
+   Fields defined in Paddle UI
+   ![Paddle UI - Create product](./payment-gateway-paddle-create-product.png)
+   ![Paddle UI - product flow](./payment-gateway-paddle-product-flow.png)
+
+   Paddle products displayed in our website
+   ![Paddle products embedded](./payment-gateway-paddle-product.png)
+
+   Paddle Checkout
+   ![Paddle checkout](./payment-gateway-paddle-checkout.png)
+
 3. Configure webhooks
 
    Overview
@@ -69,6 +79,23 @@
 4. Testing
 
    - <https://developer.paddle.com/getting-started/e4f5f125dc72a-test-your-work>
+
+5. Move to live version.
+
+   - <https://developer.paddle.com/getting-started/c052e9e8d265f-working-with-the-paddle-sandbox>
+   - <https://www.paddle.com/help/start/account-verification/what-is-domain-verification>
+
+   - NOTES:
+
+     - It consists of 3 checks:
+
+       - Domain check
+       - Business check
+       - Identity check
+
+     - Domain check is verified by setting a TXT DNS record (in Netlify in my case).
+       - The record value and instructions are sent to email upon registration.
+       - The record value has format `paddle-verification=0a1b2c3d`.
 
 ### Stripe
 

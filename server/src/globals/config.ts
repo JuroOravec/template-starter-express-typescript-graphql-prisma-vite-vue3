@@ -134,6 +134,7 @@ const configs: Record<AppEnv, Config> = Object.freeze({
     mailRelayPort: 587, // Or 25?
     mailRelayUser: 'apikey',
     mailRelayPassword: envVars.mailRelayPassword,
+    // See https://developer.paddle.com/getting-started/c052e9e8d265f-working-with-the-paddle-sandbox
     paygatePaddleApiUrl: 'https://vendors.paddle.com/api/2.0',
     paygatePaddleVendorId: envVars.paygatePaddleVendorId,
     paygatePaddlePublicKey: envVars.paygatePaddlePublicKey,
