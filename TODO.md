@@ -223,4 +223,7 @@
     - https://nuxt.com/modules/web-vitals
     - https://web.dev/vitals/
 
-- Update favicon
+- Live chat? (e.g. like Intercom)
+  - https://github.com/chatwoot/chatwoot
+  - https://geekflare.com/best-open-source-live-chat-software/
+  - https://www.helpscout.com/blog/intercom-alternatives/
