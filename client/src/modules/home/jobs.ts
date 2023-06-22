@@ -16,7 +16,7 @@ const setupPaddleCheckout: Job<JobContext> = async (args, done) => {
   const Paddle = (globalThis as any).Paddle;
   if (!Paddle) return;
 
-  if (config.paygatePaddleEnv !== 'prod') {
+  if (config.paygatePaddleEnv !== 'prd') {
     Paddle.Environment.set(config.paygatePaddleEnv);
   }
 

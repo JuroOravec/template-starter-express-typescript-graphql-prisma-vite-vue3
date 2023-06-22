@@ -17,7 +17,7 @@ interface Config {
   analyticsMixpanelToken: string | null;
   errorTrackUrl: string | null;
   errorTrackSentryDns: string | null;
-  paygatePaddleEnv: 'sandbox' | 'prod';
+  paygatePaddleEnv: 'sandbox' | 'prd';
   paygatePaddleVendorId: string | null;
   legalCompanyName: string;
   legalCompanyCountry: string;
@@ -69,7 +69,7 @@ const configs = Object.freeze({
     errorTrackUrl: 'https://1234578...@o123456.ingest.sentry.io/12345678...',
     errorTrackSentryDns:
       'https://1234578...@o123456.ingest.sentry.io/12345678...',
-    paygatePaddleEnv: 'sandbox',
+    paygatePaddleEnv: 'prd',
     paygatePaddleVendorId: '12345',
     ...legal,
   },
