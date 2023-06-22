@@ -142,15 +142,42 @@ Sometimes, the server instance might cobble up resources. In such case, follow t
 
 1. Identify the cause of large ([see thread](https://unix.stackexchange.com/questions/113840))
 
-    ```sh
-    du -hx --max-depth=1 / | sort -hr
-    du -hx --max-depth=1 /var | sort -hr
-    ...
-    ```
+   ```sh
+   du -hx --max-depth=1 / | sort -hr
+   du -hx --max-depth=1 /var | sort -hr
+   ...
+   ```
 
 2. [Delete Docker cache](https://forums.docker.com/t/how-to-delete-cache/5753)
 
-    ```sh
-    docker system prune -a -f
-    docker volume prune -f
-    ```
+   ```sh
+   docker system prune -a -f
+   docker volume prune -f
+   ```
+
+## Recipes
+
+### Connect from your computer to the server
+
+1. Get your computer's public SSH key.
+
+2. Add your public SSH key to the list of allowed hosts on the server:
+
+   1. Log into the server through a different method
+
+   - E.g. if using Digital Ocean, then you can connect as root at
+     <https://cloud.digitalocean.com/droplets/DROPLET_ID/access>
+
+   2. Open the file that includes all the allowed keys:
+
+   ```bash
+   vi /home/gitlab/.ssh/authorized_keys
+   ```
+
+   3. Add (or update if old expired) the public SSH key on a new line and save the file.
+
+3. Try to connect from your computer, e.g. with
+
+   ```bash
+   ssh gitlab@api.example.com
+   ```
