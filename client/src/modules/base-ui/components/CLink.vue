@@ -1,6 +1,6 @@
 <template>
   <NuxtLink
-    v-bind="{ ...$attrs, ...nuxtProps }"
+    v-bind="nuxtProps"
     :target="willOpenInNewTab ? '_blank' : undefined"
     class="CLink"
     :class="{ underline }"
@@ -8,30 +8,24 @@
     <slot>
       {{ link }}
     </slot>
-    <v-icon v-if="willOpenInNewTab" icon="mdi:mdi-open-in-new" color="black" size="xsmall" />
+    <v-icon v-if="willOpenInNewTab" icon="mdi:mdi-open-in-new" color="black" size="xsmall" class="ml-1" />
   </NuxtLink>
 </template>
 
 <script setup lang="ts">
   // NuxtLink with added "open in new tab" icon if it's an external URL
   // See https://nuxt.com/docs/api/components/nuxt-link
-  import type { NuxtLinkProps } from 'nuxt/app';
   import { useDefaults } from 'vuetify';
   import type { RouteLocationRaw } from 'vue-router';
   import omit from 'lodash/omit';
+
+  import type { CLinkProps } from '../types';
   
   defineSlots<{ default: () => void }>();
-  defineOptions({ inheritAttrs: false });
 
-  const _props = defineProps<NuxtLinkProps & {
-    // NOTE: Watch out for setting this type to `boolean`, because then it's set
-    // to `false` if not defined.
-    openInNewTab?: 'external' | unknown;
-    underline?: boolean;
-    color?: string;
-    colorHover?: string;
-  }>();
+  const _props = defineProps<CLinkProps>();
   const props = useDefaults(_props) as typeof _props;
+  const { color, colorHover, underline } = toRefs(props);
   
   const nuxtProps = computed(() => omit(props, 'openInNewTab', 'underline'));
   
@@ -55,9 +49,7 @@
 
 <style lang="scss">
 .CLink {
-  $self: &; // See https://css-tricks.com/using-sass-control-scope-bem-naming/ // TODO MOVE
-
-  --clinklor: v-bind(color);
+  --clink-color: v-bind(color);
   --clink-color-hover: v-bind(colorHover);
 
   font-weight: 500;

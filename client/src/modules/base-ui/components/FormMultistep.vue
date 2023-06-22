@@ -4,6 +4,7 @@
       class="form"
       :class="{ completed }"
       v-bind="$attrs"
+      :data-netlify="netlify"
       @submit.prevent="onSubmit"
     >
       <v-carousel

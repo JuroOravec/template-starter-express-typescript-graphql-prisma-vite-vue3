@@ -8,10 +8,8 @@
     <div>
       This privacy notice for
       {{ config.legalCompanyName }}
-      (<CEnum :items="['Company', 'we', 'us', 'our']" divider-last=" and ">
-        <template #="{ item }">
-          <strong>"{{ item }}"</strong>
-        </template>
+      (<CEnum :items="['Company', 'we', 'us', 'our']" divider-last=" and " #="{ item }">
+        <strong>"{{ item }}"</strong>
       </CEnum>),
       describes how and why we might collect, store, use, and/or share
       (<strong>"process"</strong>)
@@ -117,10 +115,8 @@
 
     <h2 id="toc" class="text-h4">TABLE FO CONTENTS</h2>
     <div>
-      <CList type="ol" :items="tocList">
-        <template #="{ item }">
-          <CLink :to="getHashLink(item)">{{ item.title }}</CLink>
-        </template>
+      <CList type="ol" :items="tocList" #="{ item }">
+        <CLink :to="getHashLink(item)">{{ item.title }}</CLink>
       </CList>
     </div>
 
@@ -161,10 +157,8 @@
       We may collect data necessary to process your payment if you make purchases, such as your
       payment instrument number, and the security code associated with your payment instrument.
       Payment data is stored by:
-      <CList :items="paymentProviders">
-        <template #="{ item }">
-          <CLink :to="item.privacyPolicyUrl">{{ item.name }}</CLink>
-        </template>
+      <CList :items="paymentProviders" #="{ item }">
+        <CLink :to="item.privacyPolicyUrl">{{ item.name }}</CLink>
       </CList>
     </div>
 

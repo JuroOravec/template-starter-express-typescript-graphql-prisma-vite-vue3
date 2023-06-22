@@ -1,8 +1,33 @@
+import type { GlobalComponents } from 'vue';
 import type { VuetifyOptions } from 'vuetify';
 import { aliases as iconAliases, mdi } from 'vuetify/iconsets/mdi';
 
 import { config } from '../../../globals/config';
-import type { ComponentName } from '../types/components';
+import type { ArrVal } from '../../../utils/types';
+
+//////////////
+// TYPES
+//////////////
+
+// NOTE: While components from ./components folder are auto-imported
+//       and hence also found on the `GlobalComponents` object,
+//       then other Vue components, like Pages and Layouts, are not.
+//       For the latter two, we define the names here
+const COMPONENT_NAME = [
+  // Base module - layouts
+  'DefaultLayout',
+] as const;
+
+/** Type of all component names that can be used in VuetifyOptions.defaults */
+export type ComponentName =
+  // Our custom components
+  | ArrVal<typeof COMPONENT_NAME>
+  // Components defined by Vue & Nuxt
+  | keyof GlobalComponents;
+
+//////////////
+// CONFIG
+//////////////
 
 const aliases = {
   // NOTE: Can't figure out yet how to use Vuetify aliases in Nuxt 3
@@ -12,6 +37,9 @@ const aliases = {
 
 /** Defaults for our own components */
 const customDefaults = {
+  //////////////
+  // base-ui module
+  //////////////
   DefaultLayout: {
     siteName: config.siteName,
     homeLink: '/',

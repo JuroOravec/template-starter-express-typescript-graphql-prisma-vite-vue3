@@ -4,7 +4,7 @@
     :class="classes"
   >
     <v-app-bar :elevation="0">
-      <template v-slot:prepend>
+      <template #prepend>
         <div class="pl-4 d-flex align-center" style="gap: 20px">
           <v-app-bar-title class="pt-1">
             <CLink :to="homeLink">
@@ -58,7 +58,7 @@
     </v-navigation-drawer>
 
     <div style="max-width: min(1300px, 100vw); margin: auto">
-      <v-main style="min-height: 100vh; position: relative; display: flex; flex-direction: column">
+      <v-main>
         <v-container style="flex: auto">
           <slot v-bind="{ isDrawerOpen }" />
         </v-container>
@@ -164,6 +164,14 @@ watch(normalized.width, (newW) => {
     flex-grow: 0;
     padding: 0;
     margin-top: 64px;
+  }
+
+  .v-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    // NOTE: 64px for top nav bar; 70px for bottom footer
+    min-height: calc(100vh - 64px - 70px);
   }
 }
 

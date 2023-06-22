@@ -8,10 +8,8 @@
     <div>
       This Cookie Policy explains how
       {{ config.legalCompanyName }}
-      (<CEnum :items="['Company', 'we', 'us', 'our']" divider-last=" and ">
-        <template #="{ item }">
-          <strong>"{{ item }}"</strong>
-        </template>
+      (<CEnum :items="['Company', 'we', 'us', 'our']" divider-last=" and " #="{ item }">
+        <strong>"{{ item }}"</strong>
       </CEnum>)
       uses cookies and similar technologies to recognize you when you
       visit our website at
@@ -99,19 +97,15 @@
       browser to browser, you should visit your browser's help menu for more information. The
       following is information about how to manage cookies on the most popular browsers:
     </div>
-    <CList :items="browserUrls">
-      <template #="{ item }">
-        <CLink :to="item.url">{{ item.name }}</CLink>
-      </template>
+    <CList :items="browserUrls" #="{ item }">
+      <CLink :to="item.url">{{ item.name }}</CLink>
     </CList>
     <div>
       In addition, most advertising networks offer you a way to opt out of targeted advertising. If
       you would like to find out more information, please visit:
     </div>
-    <CList :items="adNetworks">
-      <template #="{ item }">
-        <CLink :to="item.url">{{ item.name }}</CLink>
-      </template>
+    <CList :items="adNetworks"  #="{ item }">
+      <CLink :to="item.url">{{ item.name }}</CLink>
     </CList>
 
     <h3 class="text-h6">What about other tracking technologies, like web beacons?</h3>

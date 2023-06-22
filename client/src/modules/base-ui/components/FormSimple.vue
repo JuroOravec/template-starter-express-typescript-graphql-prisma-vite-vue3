@@ -4,7 +4,7 @@
       v-bind="$attrs"
       class="form"
       :class="{ completed }"
-      netlify
+      :data-netlify="netlify"
       style="gap: 20px;"
       @submit.prevent="onSubmit"
     >

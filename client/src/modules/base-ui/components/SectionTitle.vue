@@ -1,6 +1,6 @@
 <template>
   <h3 class="SectionTitle">
-    <CLinkable :id="props.id">
+    <CLinkable :id="props.id" color="white" color-hover="white">
       <slot />
     </CLinkable>
   </h3>

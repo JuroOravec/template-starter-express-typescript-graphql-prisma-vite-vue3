@@ -1,5 +1,5 @@
 <template>
-  <CLink :id="slug" class="CLinkable" :class="classes" @click="onLinkClick">
+  <CLink v-bind="linkProps" :underline="linkUnderline" :id="slug" class="CLinkable" :class="classes" @click="onLinkClick">
     <span class="CLinkable__hash">#</span>
     <span ref="containerEl">
       <slot />
@@ -9,16 +9,22 @@
 
 <script setup lang="ts">
 import { useDefaults } from 'vuetify';
+import omit from 'lodash/omit';
+
+import type { CLinkProps } from '../types';
 
 defineSlots<{
   default: (props: {}) => void;
 }>();
-const _props = defineProps<{
+const _props = defineProps<CLinkProps & {
   id?: string;
   breakpoints?: Record<'md', number>;
 }>();
 const props = useDefaults(_props) as typeof _props;
 const { breakpoints } = toRefs(props);
+
+const linkProps = computed(() => omit(props, 'id', 'breakpoints'));
+const linkUnderline = computed(() => false || linkProps.value.underline);
 
 const router = useRouter();
 const { classes } = useDisplayClasses(breakpoints);
@@ -31,7 +37,10 @@ const slug = computed(() => {
 
   const titleText = containerEl.value?.textContent;
   // Convert "Happy & Bon+Bon  " to "happy-bon-bon"
-  const titleSlug = titleText?.trim().toLocaleLowerCase().replace(/[^0-9a-zA-Z-]+/g, '-');
+  const titleSlug = titleText?.trim().toLocaleLowerCase()
+    .replace(/['"`]+/g, '') // remove quote marks, so `don't` will be converted to `dont` instead of `don-t`
+    .replace(/[^0-9a-zA-Z-]+/g, '-') // convert unsupported characters to '-'
+    .replace(/^\-+|\-+$/g, ''); // remove leading and trailing dashes 
   return titleSlug;
 });
 

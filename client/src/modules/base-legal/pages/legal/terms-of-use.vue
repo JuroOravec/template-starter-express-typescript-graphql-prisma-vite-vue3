@@ -11,10 +11,8 @@
     <div>
       We are
       {{ config.legalCompanyName }}
-      (<CEnum :items="['Company', 'we', 'us', 'our']">
-        <template #="{ item }">
-          <strong>"{{ item }}"</strong>
-        </template>
+      (<CEnum :items="['Company', 'we', 'us', 'our']" #="{ item }">
+        <strong>"{{ item }}"</strong>
       </CEnum>)
 
     </div>
@@ -49,10 +47,8 @@
 
     <h2 id="toc" class="text-h4">TABLE FO CONTENTS</h2>
     <div>
-      <CList type="ol" :items="tocList">
-        <template #="{ item }">
-          <CLink :to="getHashLink(item)">{{ item.title }}</CLink>
-        </template>
+      <CList type="ol" :items="tocList" #="{ item }">
+        <CLink :to="getHashLink(item)">{{ item.title }}</CLink>
       </CList>
     </div>
 
