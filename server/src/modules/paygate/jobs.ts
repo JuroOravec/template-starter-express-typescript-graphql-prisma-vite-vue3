@@ -35,22 +35,26 @@ const updatePaddleProducts: Job<JobContext> = async (args, _done) => {
 
   const products = await getProducts(paddle);
 
-  // Update our copies in DB
+  // Re-create our copies in DB
   await upsertMany(prisma, prisma.product, {
-    where: {
-      productId: { in: products.map((p) => `${p.id}`) },
+    delete: {
+      where: {
+        provider: 'PADDLE',
+      },
     },
-    data: products.map((p) => ({
-      productId: `${p.id}`,
-      // NOTE: If/when we products changes or new are added, this should start throwing errors until updated
-      type: resolveProductType(p)!,
-      provider: ProductProvider.PADDLE,
-      name: p.name,
-      description: p.description,
-      priceInCents: p.base_price * 100,
-      currency: p.currency,
-      iconUrl: p.icon,
-    })),
+    create: {
+      data: products.map((p) => ({
+        productId: `${p.id}`,
+        // NOTE: If/when we products changes or new are added, this should start throwing errors until updated
+        type: resolveProductType(p)!,
+        provider: ProductProvider.PADDLE,
+        name: p.name,
+        description: p.description,
+        priceInCents: p.base_price * 100,
+        currency: p.currency,
+        iconUrl: p.icon,
+      })),
+    },
   });
 };
 

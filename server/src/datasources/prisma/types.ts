@@ -2,7 +2,7 @@ import type { PrismaClient, Prisma } from '@prisma/client';
 
 import type { SubType } from '@/utils/types';
 
-type ExtractPrismaDelegate<T> = SubType<T, { createMany: (...args: any[]) => any }>;
+export type ExtractPrismaDelegate<T> = SubType<T, { createMany: (...args: any[]) => any }>;
 
 /**
  * Prisma delegates - AKA the "table" properties on PrismaClient. This is the `user`

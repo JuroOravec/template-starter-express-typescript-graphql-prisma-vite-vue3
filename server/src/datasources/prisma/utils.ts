@@ -15,15 +15,15 @@ export const upsertMany = async <T extends PrismaDelegate>(
   prisma: PrismaClient,
   prismaTable: T,
   input: {
-    where: NonNullable<Parameters<T['deleteMany']>[0]>['where'];
-    data: NonNullable<Parameters<T['createMany']>[0]>['data'];
+    delete: NonNullable<Parameters<T['deleteMany']>[0]>;
+    create: NonNullable<Parameters<T['createMany']>[0]>;
   },
 ) => {
   // NOTE: Do delete + create since upsertMany doesn't exist
   // - https://stackoverflow.com/questions/71408235/how-is-upsertmany-implemented-in-prisma-orm
   // - https://github.com/prisma/prisma/issues/4134
-  const deletePromise = (prismaTable as AnyPrismaDelegate).deleteMany({ where: input.where });
-  const createPromise = (prismaTable as AnyPrismaDelegate).createMany({ data: input.data });
+  const deletePromise = (prismaTable as AnyPrismaDelegate).deleteMany(input.delete as any);
+  const createPromise = (prismaTable as AnyPrismaDelegate).createMany(input.create as any);
 
   await prisma.$transaction([deletePromise, createPromise]);
 };
