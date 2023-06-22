@@ -114,6 +114,7 @@
     "graphql-tag": "^2.12.6",
     "helmet": "^7.0.0",
     "http-errors": "^2.0.0",
+    "is-disposable": "^0.4.0",
     "joi": "^17.9.2",
     "lodash": "^4.17.21",
     "mailparser": "^3.6.4",
