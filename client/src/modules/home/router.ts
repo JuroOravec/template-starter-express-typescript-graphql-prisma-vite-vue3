@@ -1,6 +1,4 @@
-import type { PageMeta } from 'nuxt/app';
-
-import { ArrVal, enumFromArray } from '../../utils/types';
+import { ArrVal, RouteItem, enumFromArray } from '../../utils/types';
 
 const HOME_ROUTES = ['home', 'about', 'pricing'] as const;
 export type HomeRoute = ArrVal<typeof HOME_ROUTES>;
@@ -24,7 +22,4 @@ export const homeRoutes = {
     path: '/about',
     layout: 'home-layout',
   },
-} satisfies Record<
-  HomeRoute,
-  PageMeta & { name: HomeRoute; path: string; layout: string }
->;
+} satisfies Record<HomeRoute, RouteItem<HomeRoute>>;
