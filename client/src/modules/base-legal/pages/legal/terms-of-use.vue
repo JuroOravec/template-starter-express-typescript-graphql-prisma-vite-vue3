@@ -45,7 +45,7 @@
       We recommend that you print a copy of these Legal Terms for your records.
     </div>
 
-    <h2 id="toc" class="text-h4">TABLE FO CONTENTS</h2>
+    <h2 id="toc" class="text-h4">TABLE OF CONTENTS</h2>
     <div>
       <CList type="ol" :items="tocList" #="{ item }">
         <CLink :to="getHashLink(item)">{{ item.title }}</CLink>
