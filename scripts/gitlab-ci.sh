@@ -116,7 +116,7 @@ if [ "$job" == "client-test-build" ]; then
   npm ci
   npm run build:ssg
 
-if [ "$job" == "server-ssh-prod" ]; then
+elif [ "$job" == "server-ssh-prod" ]; then
   sshTest "$SERVER_IP_PROD" "$SERVER_USER_PROD"
 
 elif [ "$job" == "server-ssh-stg" ]; then
