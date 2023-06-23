@@ -145,6 +145,11 @@ server-test-unit:
 #   stage: build-stg
 #   only:
 #     - staging
+#   needs:
+#     - server-lint
+#     - server-test-build
+#     - server-test-unit
+#     - server-ssh-stg
 #   image: docker:latest
 #   script:
 #     - sh ./scripts/gitlab-ci.sh server-build-stg
@@ -194,6 +199,11 @@ server-build-prod:
   stage: build-prod
   only:
     - main
+  needs:
+    - server-lint
+    - server-test-build
+    - server-test-unit
+    - server-ssh-prod
   image: docker:latest
   script:
     - sh ./scripts/gitlab-ci.sh server-build-prod
