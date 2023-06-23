@@ -11,6 +11,8 @@
      to filter out spam.
   4. On SMPT node server, [install dependencies](https://spamscanner.net/#/?id=ubuntu).
 
+- Deploy client from CI/CD pipeline
+
 - Optimize CI/CD pipeline
 
   - https://blog.nimbleways.com/let-s-make-faster-gitlab-ci-cd-pipelines/
@@ -22,6 +24,10 @@
   - Make sure all page visits are tracked
   - Make sure all buttons are tracked
   - See https://github.com/mixpanel/mixpanel-js/blob/master/doc/readme.io/javascript-full-api-reference.md#mixpaneltrack_forms
+
+- DB backup
+
+  - For the dB restore script, add option to select the latest entry
 
 - Configure CSS lib
 
