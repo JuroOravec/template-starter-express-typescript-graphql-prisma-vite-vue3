@@ -111,6 +111,11 @@ function serverDbRestore () {
 # Test jobs
 ################
 
+if [ "$job" == "client-test-build" ]; then
+  cd client
+  npm ci
+  npm run build:ssg
+
 if [ "$job" == "server-ssh-prod" ]; then
   sshTest "$SERVER_IP_PROD" "$SERVER_USER_PROD"
 

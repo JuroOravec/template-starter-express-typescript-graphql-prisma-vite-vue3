@@ -76,7 +76,25 @@ stages:
   - deploy-prod
 
 ########################
-# 2.1 TEST JOBS
+# 2. JOBS
+########################
+
+########################
+# 2.1 TEST JOBS - CLIENT
+########################
+
+client-test-build:
+  stage: test
+  only:
+    - staging
+    - main
+    - dev
+  image: node:18-alpine
+  script:
+    - sh ./scripts/gitlab-ci.sh client-test-build
+
+########################
+# 2.2 TEST JOBS - SERVER
 ########################
 
 # Test that we can establish connection to servers
@@ -120,7 +138,7 @@ server-test-unit:
     - sh ./scripts/gitlab-ci.sh server-test-unit
 
 ########################
-# 2.2 STAGE DEPLOY JOBS
+# 2.3 STAGE DEPLOY JOBS
 ########################
 
 # server-build-stg:
@@ -169,7 +187,7 @@ server-test-unit:
 #     include: .gitlab-ci/server-db-restore.yml
 
 ########################
-# 2.2 PROD DEPLOY JOBS
+# 2.4 PROD DEPLOY JOBS
 ########################
 
 server-build-prod:
