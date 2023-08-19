@@ -3,11 +3,8 @@
 This web app template is suitable for mid-sized projects. The project repo is designed to be shallow, yet group code semantically. With this template, your project should remain maintainable in the ballpark of:
 
 - Team of up to 10-20 people
-- Up to 500 domain-specific database tables / objects
+- Up to lower hundreds of database tables / objects
 - Multi-year project up to 3-5 years
-
-If you need something larger, instead consider splitting the working groups into smaller "squads"
-to keep ownership and maintainability in check.
 
 ## Features
 
